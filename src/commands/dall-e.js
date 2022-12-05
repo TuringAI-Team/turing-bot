@@ -51,7 +51,6 @@ module.exports = {
         ephemeral: true,
       });
       var imgs = await dalle(interaction.options.getString("prompt"), number);
-      console.log(imgs);
 
       await interaction.channel.send({
         files: imgs,
