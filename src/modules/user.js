@@ -79,6 +79,9 @@ async function getUserRoles(member) {
   if (member.roles.cache.has("1047308765218750525")) {
     roles.push("admin");
   }
+  if (member.roles.cache.has("1049409194408824902")) {
+    roles.push("premium");
+  }
   return roles;
 }
 

@@ -65,7 +65,7 @@ module.exports = {
           interaction.user
         }`,
       });
-      await updateCredits(user.id, user.credits - number);
+     // await updateCredits(user.id, user.credits - number);
     } catch (e) {
       await interaction.reply({
         content: `Something wrong happen:\n${e}`,
