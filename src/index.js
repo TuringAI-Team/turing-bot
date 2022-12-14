@@ -74,6 +74,7 @@ client.once(Events.ClientReady, (c) => {
   console.log(
     chalk.white(`Ready! Logged in as `) + chalk.blue.bold(c.user.tag)
   );
+  /* Delete
   rest
     .get(
       Routes.applicationGuildCommands(
@@ -91,10 +92,10 @@ client.once(Events.ClientReady, (c) => {
         promises.push(rest.delete(deleteUrl));
       }
       return Promise.all(promises);
-    });
+    });*/
   client.user.setPresence({
     activities: [
-      { name: `with openAI and stability.ai`, type: ActivityType.Playing },
+      { name: `v0.0.2 | dsc.gg/turing`, type: ActivityType.Playing },
     ],
     status: "online",
   });
