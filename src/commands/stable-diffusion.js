@@ -24,6 +24,18 @@ module.exports = {
           { name: "Three", value: "3" },
           { name: "Four", value: "4" }
         )
+    )
+    .addStringOption((option) =>
+      option
+        .setName("steps")
+        .setDescription("The number of steps to generate the image")
+        .setRequired(true)
+        .addChoices(
+          { name: "20", value: "20" },
+          { name: "30", value: "30" },
+          { name: "40", value: "40" },
+          { name: "50", value: "50" }
+        )
     ),
   async execute(interaction) {
     if (interaction.channel.id != "1049275551568896000") {
@@ -36,7 +48,9 @@ module.exports = {
     var roles = await getUserRoles(interaction.member);
     var user = await getUser(interaction.user);
     const number = parseInt(interaction.options.getString("number"));
-    if (user.credits < number && !roles.includes("admin")) {
+    const steps = parseInt(interaction.options.getString("steps"));
+
+    if (user.credits < number * (steps / 10) && !roles.includes("admin")) {
       interaction.reply({
         content: `You don't have enough credits to this operation`,
         ephemeral: true,
@@ -54,6 +68,7 @@ module.exports = {
         prompt: interaction.options.getString("prompt"),
         samples: number,
         apiKey: process.env.DREAMSTUDIO_API_KEY,
+        steps: steps,
       });
       var imagesArr = images.map(
         (file) => new AttachmentBuilder(file.filePath)
@@ -65,7 +80,7 @@ module.exports = {
           interaction.user
         }`,
       });
-     // await updateCredits(user.id, user.credits - number);
+      // await updateCredits(user.id, user.credits - number);
     } catch (e) {
       await interaction.reply({
         content: `Something wrong happen:\n${e}`,

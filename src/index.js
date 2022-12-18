@@ -95,7 +95,7 @@ client.once(Events.ClientReady, (c) => {
     });*/
   client.user.setPresence({
     activities: [
-      { name: `v0.0.2 | dsc.gg/turing`, type: ActivityType.Playing },
+      { name: `v0.0.3 | dsc.gg/turing`, type: ActivityType.Playing },
     ],
     status: "online",
   });
