@@ -80,7 +80,7 @@ module.exports = {
           interaction.user
         }`,
       });
-      await updateCredits(user.id, user.credits - number * (steps / 10));
+      await updateCredits(user.id, user.credits - number * (steps / 20));
     } catch (e) {
       await interaction.reply({
         content: `Something wrong happen:\n${e}`,
