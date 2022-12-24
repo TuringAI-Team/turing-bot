@@ -43,11 +43,6 @@ module.exports = {
       });
       return;
     }
-    await interaction.reply({
-      content: `Dall-e 2 is not available right now. Please use <#1049275551568896000>`,
-      ephemeral: true,
-    });
-    return;
     try {
       await interaction.reply({
         content: `Generating your results for: **${interaction.options.getString(

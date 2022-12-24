@@ -5,18 +5,18 @@ const { getUser, updateCredits, getUserRoles } = require("../modules/user");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("stable-diffusion")
-    .setDescription("Generate an image using stable diffusion")
+    .setName("fakeyou")
+    .setDescription("Generate an audio using fakeyou")
     .addStringOption((option) =>
       option
         .setName("prompt")
-        .setDescription("The prompt for generating an image")
+        .setDescription("The text you want to make the voice speak.")
         .setRequired(true)
     )
     .addStringOption((option) =>
       option
-        .setName("number")
-        .setDescription("The number of images you want")
+        .setName("voice")
+        .setDescription("The voice token to generate the audio")
         .setRequired(true)
         .addChoices(
           { name: "One", value: "1" },
@@ -38,9 +38,9 @@ module.exports = {
         )
     ),
   async execute(interaction) {
-    if (interaction.channel.id != "1049275551568896000") {
+    if (interaction.channel.id != "1055404706966540309") {
       interaction.reply({
-        content: `For use this utility go to <#1049275551568896000>`,
+        content: `For use this utility go to <#1055404706966540309>`,
         ephemeral: true,
       });
       return;

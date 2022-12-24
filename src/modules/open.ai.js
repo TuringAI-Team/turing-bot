@@ -30,22 +30,8 @@ async function dalle(prompt, number) {
   });
   return imagesArr;
 }
-async function jsHelper(prompt) {
-  const response = await openai.createCompletion({
-    model: "code-davinci-002",
-    prompt: `You: ${prompt}\nJavaScript chatbot`,
-    temperature: 0,
-    max_tokens: 60,
-    top_p: 1.0,
-    frequency_penalty: 0.5,
-    presence_penalty: 0.0,
-    stop: ["You:"],
-  });
-  return response.data.choices[0].text;
-}
 
 module.exports = {
   chat,
   dalle,
-  jsHelper,
 };
