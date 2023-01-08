@@ -67,7 +67,6 @@ export default {
         steps: steps,
         engineId: "stable-diffusion-v1-5",
       });
-      console.log(res);
       var images = res.artifacts;
       var imagesArr = images.map((file) => {
         const sfbuff = new Buffer.from(file.base64, "base64");
