@@ -56,8 +56,6 @@ AIs included:
 
 - [x] Dall-e 2
 - [x] Stable diffusion
-- [x] gpt-3
-- [ ] codex
 - [ ] FakeYou
 - [ ] Whisper
 - [ ] NeRF

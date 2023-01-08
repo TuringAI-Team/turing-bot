@@ -4,8 +4,7 @@ import {
   EmbedBuilder,
 } from "discord.js";
 import "dotenv/config";
-import pkg from "stability-ts";
-const { generateAsync } = pkg;
+import { textToImg } from "dreamstudio.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -51,21 +50,29 @@ export default {
     }
     const number = parseInt(interaction.options.getString("number"));
     const steps = parseInt(interaction.options.getString("steps"));
+    const prompt = interaction.options.getString("prompt");
     await interaction.reply({
-      content: `Generating your results for: **${interaction.options.getString(
-        "prompt"
-      )}**`,
+      content: `Generating your results for: **${prompt}**`,
     });
     try {
-      const { res, images } = await generateAsync({
-        prompt: interaction.options.getString("prompt"),
+      const res = await textToImg({
+        text_prompts: [
+          {
+            text: prompt,
+            weight: 1,
+          },
+        ],
         samples: number,
         apiKey: process.env.DREAMSTUDIO_API_KEY,
         steps: steps,
+        engineId: "stable-diffusion-v1-5",
       });
-      var imagesArr = images.map(
-        (file) => new AttachmentBuilder(file.filePath)
-      );
+      console.log(res);
+      var images = res.artifacts;
+      var imagesArr = images.map((file) => {
+        const sfbuff = new Buffer.from(file.base64, "base64");
+        return new AttachmentBuilder(sfbuff, "output.png");
+      });
 
       await interaction.editReply({
         files: imagesArr,
