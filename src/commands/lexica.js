@@ -42,7 +42,7 @@ export default {
           .setPages(
             imgs.map((el, i) => {
               return new EmbedBuilder()
-                .setDescription(`${i}º page`)
+                .setDescription(`Prompt: ${image.prompt}`)
                 .setImage(el.src);
             })
           )
