@@ -23,7 +23,7 @@ async function dalle(prompt, number) {
   const response = await openai.createImage({
     prompt: prompt,
     n: number,
-    size: "256x256",
+    size: "512x512",
   });
   var imagesArr = response.data.data.map((d, i) => {
     return { attachment: d.url, name: `result-${i}.png` };
