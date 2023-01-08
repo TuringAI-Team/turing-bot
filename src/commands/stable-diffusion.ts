@@ -48,8 +48,24 @@ export default {
       });
       return;
     }
-    const number = parseInt(interaction.options.getString("number"));
-    const steps = parseInt(interaction.options.getString("steps"));
+    var n = parseInt(interaction.options.getString("number"));
+    var s = parseInt(interaction.options.getString("steps"));
+    if (n != 1 && n != 2 && n != 3 && n != 4) {
+      interaction.reply({
+        content: `Invalid request`,
+        ephemeral: true,
+      });
+      return;
+    }
+    if (s != 30 && s != 50 && s != 100 && s != 150) {
+      interaction.reply({
+        content: `Invalid request`,
+        ephemeral: true,
+      });
+      return;
+    }
+    var number: 1 | 2 | 3 | 4 = n;
+    const steps: 30 | 50 | 100 | 150 = s;
     const prompt = interaction.options.getString("prompt");
     await interaction.reply({
       content: `Generating your results for: **${prompt}**`,
@@ -69,8 +85,8 @@ export default {
       });
       var images = res.artifacts;
       var imagesArr = images.map((file) => {
-        const sfbuff = new Buffer.from(file.base64, "base64");
-        return new AttachmentBuilder(sfbuff, "output.png");
+        const sfbuff = Buffer.from(file.base64, "base64");
+        return new AttachmentBuilder(sfbuff, { name: "output.png" });
       });
 
       await interaction.editReply({

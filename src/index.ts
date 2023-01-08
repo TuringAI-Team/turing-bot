@@ -16,7 +16,7 @@ import "dotenv/config";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client: any = new Client({ intents: [GatewayIntentBits.Guilds] });
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
 client.commands = new Collection();
@@ -62,9 +62,7 @@ for (const file of commandFiles) {
       { body: commands }
     );
 
-    console.log(
-      `Successfully reloaded ${data.length} application (/) commands.`
-    );
+    console.log(`Successfully reloaded application (/) commands.`);
   } catch (error) {
     // And of course, make sure you catch and log any errors!
     console.error(error);
