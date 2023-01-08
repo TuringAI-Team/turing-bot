@@ -50,7 +50,7 @@ export default {
           .build();
       }
     } catch (e) {
-      await interaction.editReply({
+      await interaction.reply({
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,
       });
