@@ -46,7 +46,6 @@ export default {
                 .setImage(el.src);
             })
           )
-
           .setColor("#5865F2")
           .build();
       }
