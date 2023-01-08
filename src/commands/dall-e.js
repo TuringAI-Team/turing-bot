@@ -44,9 +44,7 @@ module.exports = {
 
       await interaction.editReply({
         files: imgs,
-        content: `**${interaction.options.getString("prompt")}** - ${
-          interaction.user
-        }`,
+        content: `**Prompt:** ${interaction.options.getString("prompt")}`,
       });
     } catch (e) {
       await interaction.editReply({
