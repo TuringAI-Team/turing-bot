@@ -37,7 +37,6 @@ module.exports = {
       content: `Generating your results for: **${interaction.options.getString(
         "prompt"
       )}**`,
-      ephemeral: true,
     });
     try {
       var imgs = await dalle(interaction.options.getString("prompt"), number);
