@@ -1,5 +1,5 @@
-const { Configuration, OpenAIApi } = require("openai");
-require("dotenv").config();
+import { Configuration, OpenAIApi } from "openai";
+import "dotenv/config";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -31,7 +31,4 @@ async function dalle(prompt, number) {
   return imagesArr;
 }
 
-module.exports = {
-  chat,
-  dalle,
-};
+export { chat, dalle };

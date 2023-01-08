@@ -1,8 +1,13 @@
-const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
-const { generateAsync } = require("stability-client");
-require("dotenv").config();
+import {
+  SlashCommandBuilder,
+  AttachmentBuilder,
+  EmbedBuilder,
+} from "discord.js";
+import "dotenv/config";
+import pkg from "stability-ts";
+const { generateAsync } = pkg;
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName("stable-diffusion")
     .setDescription("Generate an image using stable diffusion")

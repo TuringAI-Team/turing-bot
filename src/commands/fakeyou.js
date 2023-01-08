@@ -1,8 +1,11 @@
-const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
-const { generateAsync } = require("stability-client");
-require("dotenv").config();
+import {
+  SlashCommandBuilder,
+  AttachmentBuilder,
+  EmbedBuilder,
+} from "discord.js";
+import "dotenv/config";
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName("fakeyou")
     .setDescription("Generate an audio using fakeyou")
@@ -37,7 +40,7 @@ module.exports = {
         )
     ),
   async execute(interaction) {
-    if (interaction.channel.id != "1055404706966540309") {
+    /*  if (interaction.channel.id != "1055404706966540309") {
       interaction.reply({
         content: `For use this utility go to <#1055404706966540309>`,
         ephemeral: true,
@@ -75,6 +78,6 @@ module.exports = {
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,
       });
-    }
+    }*/
   },
 };

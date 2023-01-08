@@ -1,8 +1,12 @@
-const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
-require("dotenv").config();
-const { dalle } = require("../modules/open.ai");
+import {
+  SlashCommandBuilder,
+  AttachmentBuilder,
+  EmbedBuilder,
+} from "discord.js";
+import "dotenv/config";
+import { dalle } from "../modules/open.ai.js";
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName("dall-e")
     .setDescription("Generate an image using dall-e 2")
