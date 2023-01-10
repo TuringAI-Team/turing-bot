@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import "dotenv/config";
 import { textToImg } from "dreamstudio.js";
+import supabase from "../modules/supabase.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -88,7 +89,14 @@ export default {
         const sfbuff = Buffer.from(file.base64, "base64");
         return new AttachmentBuilder(sfbuff, { name: "output.png" });
       });
-
+      const { data, error } = await supabase.from("results").insert([
+        {
+          prompt: prompt,
+          provider: "stable-diffusion-v1-5",
+          result: images,
+          uses: 1,
+        },
+      ]);
       await interaction.editReply({
         files: imagesArr,
         content: `**Prompt:** ${interaction.options.getString(

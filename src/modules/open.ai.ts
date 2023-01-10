@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
+import supabase from "./supabase.js";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -28,6 +29,11 @@ async function dalle(prompt, number) {
   var imagesArr = response.data.data.map((d, i) => {
     return { attachment: d.url, name: `result-${i}.png` };
   });
+  const { data, error } = await supabase
+    .from("results")
+    .insert([
+      { prompt: prompt, provider: "dall-e 2", result: imagesArr, uses: 1 },
+    ]);
   return imagesArr;
 }
 
