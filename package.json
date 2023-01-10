@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "tsc && node .",
-    "dev": "tsc && nodemon ."
+    "dev": "tsc && nodemon .",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
