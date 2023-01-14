@@ -50,7 +50,7 @@ export default {
     )
     .addStringOption((option) =>
       option
-        .setName("negPrompt")
+        .setName("negprompt")
         .setDescription("The negative prompt you want to use,")
         .setRequired(false)
     ),
@@ -84,7 +84,7 @@ export default {
     var number: 1 | 2 | 3 | 4 = n;
     const steps: 30 | 50 | 100 | 150 = s;
     const prompt = interaction.options.getString("prompt");
-    const negPrompt = interaction.options.getString("negPrompt");
+    const negPrompt = interaction.options.getString("negprompt");
 
     await interaction.reply({
       content: `Generating your results for: **${prompt}**`,
