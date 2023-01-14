@@ -4,7 +4,7 @@ import {
   EmbedBuilder,
 } from "discord.js";
 import "dotenv/config";
-import { textToImg } from "dreamstudio.js";
+import { textToImg, getBalance } from "dreamstudio.js";
 import supabase from "../modules/supabase.js";
 
 export default {
@@ -40,8 +40,22 @@ export default {
           { name: "100", value: "100" },
           { name: "150", value: "150" }
         )
+    )
+    .addStringOption((option) =>
+      option
+        .setName("type")
+        .setDescription("The type of the image you want to get")
+        .setRequired(false)
+        .addChoices()
+    )
+    .addStringOption((option) =>
+      option
+        .setName("negPrompt")
+        .setDescription("The negative prompt you want to use,")
+        .setRequired(false)
     ),
   async execute(interaction) {
+    var tags = ["masterpiece", "highres", "absurdres", "extreme detail"];
     if (interaction.channel.id != "1049275551568896000") {
       interaction.reply({
         content: `For use this utility go to <#1049275551568896000>`,
@@ -51,6 +65,8 @@ export default {
     }
     var n = parseInt(interaction.options.getString("number"));
     var s = parseInt(interaction.options.getString("steps"));
+    var t = interaction.options.getString("type");
+
     if (n != 1 && n != 2 && n != 3 && n != 4) {
       interaction.reply({
         content: `Invalid request`,
@@ -59,7 +75,7 @@ export default {
       return;
     }
     if (s != 30 && s != 50 && s != 100 && s != 150) {
-      interaction.reply({
+      await interaction.reply({
         content: `Invalid request`,
         ephemeral: true,
       });
@@ -68,22 +84,50 @@ export default {
     var number: 1 | 2 | 3 | 4 = n;
     const steps: 30 | 50 | 100 | 150 = s;
     const prompt = interaction.options.getString("prompt");
+    const negPrompt = interaction.options.getString("negPrompt");
+
     await interaction.reply({
       content: `Generating your results for: **${prompt}**`,
     });
+    if (t == "realistic") {
+      tags.push("");
+    }
+    let { data: dreamstudio, error } = await supabase
+      .from("dreamstudio")
+      .select("*");
+    var firstOne = await dreamstudio[0];
+    if (!firstOne) {
+      await interaction.reply({
+        content: `We are running out of credits, please wait until we solve the issue.`,
+        ephemeral: true,
+      });
+      return;
+    }
+    var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
     try {
       const res = await textToImg({
         text_prompts: [
           {
-            text: prompt,
+            text: `${prompt}, ${tags.join(", ")}`,
             weight: 1,
+          },
+          {
+            text: `${defaultNegPrompt}, ${negPrompt}`,
+            weight: -1,
           },
         ],
         samples: number,
-        apiKey: process.env.DREAMSTUDIO_API_KEY,
+        apiKey: firstOne.key,
         steps: steps,
         engineId: "stable-diffusion-v1-5",
       });
+      var balance = await getBalance(firstOne.key);
+      if (balance.credits <= 10) {
+        const { data, error } = await supabase
+          .from("dreamstudio")
+          .delete()
+          .eq("eq", firstOne.key);
+      }
       var images = res.artifacts;
       var imagesArr = images.map((file) => {
         const sfbuff = Buffer.from(file.base64, "base64");
