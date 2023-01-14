@@ -188,6 +188,10 @@ export default {
         content: `**Prompt:** ${prompt} - ${steps}`,
       });
     } catch (e) {
+      const { data, error } = await supabase
+        .from("dreamstudio")
+        .delete()
+        .eq("eq", firstOne.key);
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,
