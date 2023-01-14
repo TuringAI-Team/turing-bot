@@ -46,7 +46,15 @@ export default {
         .setName("type")
         .setDescription("The type of the image you want to get")
         .setRequired(false)
-        .addChoices()
+        .addChoices(
+          { name: "Realistic", value: "realistic" },
+          { name: "Wallpaper", value: "wallpaper" },
+          { name: "Draw", value: "drawn" },
+          { name: "Anime", value: "anime" },
+          { name: "Pastel", value: "pastel" },
+          { name: "Watercolor", value: "watercolor" },
+          { name: "Surreal", value: "surreal" }
+        )
     )
     .addStringOption((option) =>
       option
@@ -83,21 +91,47 @@ export default {
     }
     var number: 1 | 2 | 3 | 4 = n;
     const steps: 30 | 50 | 100 | 150 = s;
-    const prompt = interaction.options.getString("prompt");
+    var prompt = interaction.options.getString("prompt");
+    prompt = `${prompt}, ${tags.join(", ")}`;
     const negPrompt = interaction.options.getString("negprompt");
 
     await interaction.reply({
       content: `Generating your results for: **${prompt}**`,
     });
     if (t == "realistic") {
-      tags.push("");
+      tags.push("((realistic))");
+      tags.push("((RTX))");
+      tags.push("((photograph))");
+      tags.push("((photorealistic))");
+    }
+    if (t == "wallpaper") {
+      tags.push("((background))");
+      tags.push("((wallpaper))");
+      tags.push("colorful");
+    }
+    if (t == "drawn") {
+      tags.push("((drawing))");
+    }
+    if (t == "pastel") {
+      tags.push("((drawing))");
+      tags.push("((pastel style))");
+      tags.push("((pastel colors))");
+    }
+    if (t == "watercolor") {
+      tags.push("((drawing))");
+      tags.push("((watercolor style))");
+      tags.push("((watercolor))");
+    }
+    if (t == "pastel") {
+      tags.push("((impossible))");
+      tags.push("((strange))");
+      tags.push("((wonky))");
+      tags.push("((surreal))");
     }
     let { data: dreamstudio, error } = await supabase
       .from("dreamstudio")
       .select("*");
-    console.log(error, dreamstudio);
     var firstOne = await dreamstudio[0];
-    console.log(firstOne);
     if (!firstOne) {
       await interaction.reply({
         content: `We are running out of credits, please wait until we solve the issue.`,
@@ -110,7 +144,7 @@ export default {
       const res = await textToImg({
         text_prompts: [
           {
-            text: `${prompt}, ${tags.join(", ")}`,
+            text: prompt,
             weight: 1,
           },
           {
