@@ -92,12 +92,9 @@ export default {
     var number: 1 | 2 | 3 | 4 = n;
     const steps: 30 | 50 | 100 | 150 = s;
     var prompt = interaction.options.getString("prompt");
-    prompt = `${prompt}, ${tags.join(", ")}`;
     const negPrompt = interaction.options.getString("negprompt");
+    console.log(t);
 
-    await interaction.reply({
-      content: `Generating your results for: **${prompt}**`,
-    });
     if (t == "realistic") {
       tags.push("((realistic))");
       tags.push("((RTX))");
@@ -128,6 +125,11 @@ export default {
       tags.push("((wonky))");
       tags.push("((surreal))");
     }
+    prompt = `${prompt}, ${tags.join(", ")}`;
+
+    await interaction.reply({
+      content: `Generating your results for: **${prompt}**`,
+    });
     let { data: dreamstudio, error } = await supabase
       .from("dreamstudio")
       .select("*");
