@@ -19,6 +19,27 @@ export default {
     )
     .addStringOption((option) =>
       option
+        .setName("model")
+        .setDescription("The stable diffusion model you want to use")
+        .setRequired(true)
+        .addChoices(
+          {
+            name: "Stable diffusion v2.1(boosters only)",
+            value: "stable-diffusion-512-v2-1",
+          },
+          {
+            name: "Stable diffusion v2.0(boosters only)",
+            value: "stable-diffusion-512-v2-0",
+          },
+          {
+            name: "Stable diffusion v1.5 (default option)",
+            value: "stable-diffusion-v1-5",
+          },
+          { name: "Stable diffusion v1", value: "stable-diffusion-v1" }
+        )
+    )
+    .addStringOption((option) =>
+      option
         .setName("number")
         .setDescription("The number of images you want")
         .setRequired(true)
@@ -93,8 +114,17 @@ export default {
     const steps: 30 | 50 | 100 | 150 = s;
     var prompt = interaction.options.getString("prompt");
     const negPrompt = interaction.options.getString("negprompt");
-    console.log(t);
-
+    var m = interaction.options.getString("model");
+    if (m == "stable-diffusion-512-v2-0" || m == "stable-diffusion-512-v2-1") {
+      var isBooster = await checkBooster(interaction);
+      if (!isBooster) {
+        await interaction.reply({
+          content: `The model ${m} is only for server boosters.`,
+          ephemeral: true,
+        });
+        return;
+      }
+    }
     if (t == "realistic") {
       tags.push("((realistic))");
       tags.push("((RTX))");
@@ -164,7 +194,7 @@ export default {
         samples: number,
         apiKey: firstOne.key,
         steps: steps,
-        engineId: "stable-diffusion-v1-5",
+        engineId: m,
       });
       var balance = await getBalance(firstOne.key);
       if (balance.credits <= 10) {
@@ -202,3 +232,13 @@ export default {
     }
   },
 };
+
+async function checkBooster(interaction) {
+  if (
+    interaction.member.roles.cache.find((x) => x.id == "899763684337922088")
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
