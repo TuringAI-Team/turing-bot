@@ -181,9 +181,7 @@ export default {
       ]);
       await interaction.editReply({
         files: imagesArr,
-        content: `**Prompt:** ${interaction.options.getString(
-          "prompt"
-        )} - ${steps}`,
+        content: `**Prompt:** ${prompt} - ${steps}`,
       });
     } catch (e) {
       await interaction.editReply({
