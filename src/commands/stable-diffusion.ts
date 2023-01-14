@@ -63,7 +63,7 @@ export default {
         .setRequired(false)
     ),
   async execute(interaction) {
-    var tags = ["highres", "absurdres", "extreme detail"];
+    var tags = [];
     if (interaction.channel.id != "1049275551568896000") {
       interaction.reply({
         content: `For use this utility go to <#1049275551568896000>`,
@@ -98,6 +98,8 @@ export default {
     if (t == "realistic") {
       tags.push("((realistic))");
       tags.push("((RTX))");
+      tags.push("highres");
+      tags.push("extreme detail");
       tags.push("((photograph))");
       tags.push("((photorealistic))");
     }
@@ -105,6 +107,7 @@ export default {
       tags.push("((background))");
       tags.push("((wallpaper))");
       tags.push("colorful");
+      tags.push("highres");
     }
     if (t == "drawn") {
       tags.push("((drawing))");
