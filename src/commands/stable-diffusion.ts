@@ -47,13 +47,13 @@ export default {
         .setDescription("The type of the image you want to get")
         .setRequired(false)
         .addChoices(
-          { name: "Realistic", value: "realistic" },
-          { name: "Wallpaper", value: "wallpaper" },
-          { name: "Draw", value: "drawn" },
-          { name: "Anime", value: "anime" },
-          { name: "Pastel", value: "pastel" },
-          { name: "Watercolor", value: "watercolor" },
-          { name: "Surreal", value: "surreal" }
+          { name: "realistic", value: "realistic" },
+          { name: "wallpaper", value: "wallpaper" },
+          { name: "draw", value: "drawn" },
+          { name: "anime", value: "anime" },
+          { name: "pastel", value: "pastel" },
+          { name: "watercolor", value: "watercolor" },
+          { name: "surreal", value: "surreal" }
         )
     )
     .addStringOption((option) =>
@@ -124,6 +124,10 @@ export default {
       tags.push("((strange))");
       tags.push("((wonky))");
       tags.push("((surreal))");
+    }
+    if (t == "anime") {
+      tags.push("((anime))");
+      tags.push("((anime style))");
     }
     prompt = `${prompt}, ${tags.join(", ")}`;
 
