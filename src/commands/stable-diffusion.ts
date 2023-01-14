@@ -95,6 +95,7 @@ export default {
     let { data: dreamstudio, error } = await supabase
       .from("dreamstudio")
       .select("*");
+    console.log(error, dreamstudio);
     var firstOne = await dreamstudio[0];
     console.log(firstOne);
     if (!firstOne) {
