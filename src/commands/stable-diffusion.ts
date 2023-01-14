@@ -63,7 +63,7 @@ export default {
         .setRequired(false)
     ),
   async execute(interaction) {
-    var tags = ["masterpiece", "highres", "absurdres", "extreme detail"];
+    var tags = ["highres", "absurdres", "extreme detail"];
     if (interaction.channel.id != "1049275551568896000") {
       interaction.reply({
         content: `For use this utility go to <#1049275551568896000>`,
