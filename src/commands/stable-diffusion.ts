@@ -171,7 +171,7 @@ export default {
         const { data, error } = await supabase
           .from("dreamstudio")
           .delete()
-          .eq("eq", firstOne.key);
+          .eq("key", firstOne.key);
       }
       var images = res.artifacts;
       var imagesArr = images.map((file) => {
@@ -194,7 +194,7 @@ export default {
       const { data, error } = await supabase
         .from("dreamstudio")
         .delete()
-        .eq("eq", firstOne.key);
+        .eq("key", firstOne.key);
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,
