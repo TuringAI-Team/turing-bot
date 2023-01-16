@@ -7,7 +7,7 @@ import "dotenv/config";
 import { dalle } from "../modules/open.ai.js";
 
 export default {
-  cooldown: "5m",
+  cooldown: "3m",
   data: new SlashCommandBuilder()
     .setName("dall-e")
     .setDescription("Generate an image using dall-e 2")
