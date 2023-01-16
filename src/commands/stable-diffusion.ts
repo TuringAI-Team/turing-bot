@@ -8,6 +8,7 @@ import { textToImg, getBalance } from "dreamstudio.js";
 import supabase from "../modules/supabase.js";
 
 export default {
+  cooldown: "2m",
   data: new SlashCommandBuilder()
     .setName("stable-diffusion")
     .setDescription("Generate an image using stable diffusion")

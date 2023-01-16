@@ -15,9 +15,11 @@ import {
 import "dotenv/config";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+import ms from "ms";
 // Create a new client instance
 const client: any = new Client({ intents: [GatewayIntentBits.Guilds] });
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+import supabase from "./modules/supabase.js";
 
 client.commands = new Collection();
 const commands = [];
@@ -112,7 +114,43 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   try {
-    await command.execute(interaction);
+    if (command.cooldown) {
+      let { data: cooldowns, error } = await supabase
+        .from("cooldown")
+        .select("*")
+
+        // Filters
+        .eq("userId", interaction.user.id)
+        .eq("command", interaction.commandName);
+      if (cooldowns && cooldowns[0]) {
+        var cooldown = cooldowns[0];
+        var createdAt = new Date(cooldown.created_at);
+        var milliseconds = createdAt.getTime();
+        var now = Date.now();
+        var diff = now - milliseconds;
+        if (diff >= ms(command.cooldown)) {
+          const { data, error } = await supabase
+            .from("cooldown")
+            .update({ created_at: new Date() })
+            .eq("userId", interaction.user.id)
+            .eq("command", interaction.commandName);
+          await command.execute(interaction);
+        } else {
+          await interaction.reply(
+            `Please wait ${ms(diff)} to use this command again`
+          );
+        }
+      } else {
+        const { data, error } = await supabase
+          .from("cooldown")
+          .insert([
+            { userId: interaction.user.id, command: interaction.commandName },
+          ]);
+        await command.execute(interaction);
+      }
+    } else {
+      await command.execute(interaction);
+    }
   } catch (error) {
     console.error(error);
     await interaction.reply({
