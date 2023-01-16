@@ -168,7 +168,8 @@ client.login(process.env.TOKEN);
 
 async function checkBooster(interaction) {
   if (
-    interaction.member.roles.cache.find((x) => x.id == "899763684337922088")
+    interaction.member.roles.cache.find((x) => x.id == "899763684337922088") ||
+    interaction.member.roles.cache.find((x) => x.id == "1061660141533007974")
   ) {
     return true;
   } else {
