@@ -129,7 +129,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         var milliseconds = createdAt.getTime();
         var now = Date.now();
         var diff = now - milliseconds;
-        var inverseDiff = milliseconds - now;
+        var count = ms(command.cooldown) - diff;
         if (diff >= ms(command.cooldown)) {
           const { data, error } = await supabase
             .from("cooldown")
@@ -140,7 +140,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         } else {
           await interaction.reply(
             `Please wait ${ms(
-              inverseDiff
+              count
             )} to use this command again.\nIf you want to avoid this cooldown you can boost our server.`
           );
         }
