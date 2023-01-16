@@ -113,8 +113,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return;
   }
 
+  var isBooster = await checkBooster(interaction);
   try {
-    if (command.cooldown) {
+    if (command.cooldown && isBooster == false) {
       let { data: cooldowns, error } = await supabase
         .from("cooldown")
         .select("*")
@@ -137,7 +138,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
           await command.execute(interaction);
         } else {
           await interaction.reply(
-            `Please wait ${ms(diff)} to use this command again`
+            `Please wait ${ms(
+              diff
+            )} to use this command again.\nIf you want to avoid this cooldown you can boost our server.`
           );
         }
       } else {
@@ -161,3 +164,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 // Log in to Discord with your client's token
 client.login(process.env.TOKEN);
+
+async function checkBooster(interaction) {
+  if (
+    interaction.member.roles.cache.find((x) => x.id == "899763684337922088")
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
