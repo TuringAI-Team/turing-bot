@@ -2,25 +2,11 @@ import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
 import supabase from "./supabase.js";
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
-async function chat(msg, model) {
-  const response = await openai.createCompletion({
-    model: model,
-    prompt: `The following is a conversation with an intelligent person. The person is helpful, creative, clever, and very friendly.\n\nHuman: ${msg}\nAI:`,
-    temperature: 0.9,
-    max_tokens: 30,
-    top_p: 1,
-    frequency_penalty: 0.0,
-    presence_penalty: 0.6,
-    stop: [" Human:", " AI:"],
+async function dalle(prompt, number, key) {
+  const configuration = new Configuration({
+    apiKey: key,
   });
-  return response.data.choices[0].text;
-}
-async function dalle(prompt, number) {
+  const openai = new OpenAIApi(configuration);
   const response = await openai.createImage({
     prompt: prompt,
     n: number,
@@ -37,4 +23,4 @@ async function dalle(prompt, number) {
   return imagesArr;
 }
 
-export { chat, dalle };
+export { dalle };

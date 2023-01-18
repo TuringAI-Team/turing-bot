@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import "dotenv/config";
 import { dalle } from "../modules/open.ai.js";
+import supabase from "../modules/supabase.js";
 
 export default {
   cooldown: "3m",
@@ -43,14 +44,45 @@ export default {
         "prompt"
       )}**`,
     });
+    let { data: accounts, error } = await supabase
+      .from("accounts")
+      .select("*")
+      .neq("key", null);
+    var firstOne = await accounts[0];
+    if (!firstOne) {
+      await interaction.reply({
+        content: `We are running out of credits, please wait until we solve the issue.`,
+        ephemeral: true,
+      });
+      return;
+    }
+    if (!firstOne.key.startsWith("sk-")) {
+      const { data, error } = await supabase
+        .from("accounts")
+        .update({
+          key: null,
+        })
+        .eq("id", firstOne.id);
+    }
+
     try {
-      var imgs = await dalle(interaction.options.getString("prompt"), number);
+      var imgs = await dalle(
+        interaction.options.getString("prompt"),
+        number,
+        firstOne.key
+      );
 
       await interaction.editReply({
         files: imgs,
         content: `**Prompt:** ${interaction.options.getString("prompt")}`,
       });
     } catch (e) {
+      const { data, error } = await supabase
+        .from("accounts")
+        .update({
+          key: null,
+        })
+        .eq("id", firstOne.id);
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,
