@@ -106,7 +106,7 @@ export default {
           await sendResults(status.generations, interaction, m, prompt, steps);
           clearInterval(interval);
         }
-      }, 5000);
+      }, 10000);
     } catch (e) {
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
