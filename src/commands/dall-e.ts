@@ -83,12 +83,6 @@ export default {
         }  **Prompt:** ${interaction.options.getString("prompt")}`,
       });
     } catch (e) {
-      const { data, error } = await supabase
-        .from("accounts")
-        .update({
-          key: null,
-        })
-        .eq("id", firstOne.id);
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,

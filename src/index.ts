@@ -20,6 +20,7 @@ import ms from "ms";
 const client: any = new Client({ intents: [GatewayIntentBits.Guilds] });
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 import supabase from "./modules/supabase.js";
+import { isPremium } from "./modules/premium.js";
 
 client.commands = new Collection();
 const commands = [];
@@ -80,6 +81,7 @@ client.once(Events.ClientReady, async (c) => {
     ],
     status: "online",
   });
+
   await checkUsers();
   setInterval(async () => {
     await checkUsers();
@@ -109,9 +111,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return;
   }
 
-  var isBooster = await checkBooster(interaction);
+  var ispremium = await isPremium(interaction.user.id);
   try {
-    if (command.cooldown && isBooster == false) {
+    if (command.cooldown && ispremium == false) {
       let { data: cooldowns, error } = await supabase
         .from("cooldown")
         .select("*")
@@ -137,7 +139,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           await interaction.reply({
             content: `Please wait **${ms(
               count
-            )}** to use this command again.\nIf you want to **avoid this cooldown** you can **boost our server**.`,
+            )}** to use this command again.\nIf you want to **avoid this cooldown** you can **donate to get premium**.`,
             ephemeral: true,
           });
         }
@@ -162,14 +164,3 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 // Log in to Discord with your client's token
 client.login(process.env.TOKEN);
-
-async function checkBooster(interaction) {
-  if (
-    interaction.member.roles.cache.find((x) => x.id == "899763684337922088") ||
-    interaction.member.roles.cache.find((x) => x.id == "1061660141533007974")
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}

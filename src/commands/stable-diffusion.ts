@@ -6,6 +6,12 @@ import {
 import "dotenv/config";
 import { textToImg, getBalance } from "dreamstudio.js";
 import supabase from "../modules/supabase.js";
+import {
+  checkGeneration,
+  generateImg,
+  getModels,
+} from "../modules/stablehorde.js";
+import { isPremium } from "../modules/premium.js";
 
 export default {
   cooldown: "2m",
@@ -36,7 +42,10 @@ export default {
             name: "Stable diffusion v1.5 (default option)",
             value: "stable-diffusion-v1-5",
           },
-          { name: "Stable diffusion v1", value: "stable-diffusion-v1" }
+          { name: "Microworlds", value: "Microworlds" },
+          { name: "Anything Diffusion", value: "Anything Diffusion" },
+          { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
+          { name: "Dreamshaper", value: "Dreamshaper" }
         )
     )
     .addStringOption((option) =>
@@ -44,23 +53,14 @@ export default {
         .setName("number")
         .setDescription("The number of images you want")
         .setRequired(true)
-        .addChoices(
-          { name: "One", value: "1" },
-          { name: "Two", value: "2" },
-          { name: "Three", value: "3" },
-          { name: "Four", value: "4" }
-        )
+        .addChoices({ name: "One", value: "1" }, { name: "Two", value: "2" })
     )
     .addStringOption((option) =>
       option
         .setName("steps")
         .setDescription("The number of steps to generate the image")
         .setRequired(true)
-        .addChoices(
-          { name: "30", value: "30" },
-          { name: "50", value: "50" },
-          { name: "100", value: "100" }
-        )
+        .addChoices({ name: "30", value: "30" }, { name: "50", value: "50" })
     )
     .addStringOption((option) =>
       option
@@ -80,7 +80,7 @@ export default {
     .addStringOption((option) =>
       option
         .setName("negprompt")
-        .setDescription("The negative prompt you want to use,")
+        .setDescription("The negative prompt you want to use.")
         .setRequired(false)
     ),
   async execute(interaction) {
@@ -119,10 +119,10 @@ export default {
     const negPrompt = interaction.options.getString("negprompt");
     var m = interaction.options.getString("model");
     if (m == "stable-diffusion-512-v2-0" || m == "stable-diffusion-512-v2-1") {
-      var isBooster = await checkBooster(interaction);
-      if (!isBooster) {
+      var ispremium = await isPremium(interaction.user.id);
+      if (!ispremium) {
         await interaction.reply({
-          content: `The model ${m} is only for server boosters.`,
+          content: `The model ${m} is only premium users.`,
           ephemeral: true,
         });
         return;
@@ -165,85 +165,126 @@ export default {
       tags.push("((anime))");
       tags.push("((anime style))");
     }
-    prompt = `${prompt}, ${tags.join(", ")}`;
-
-    await interaction.reply({
-      content: `Generating your results for: **${prompt}**`,
-    });
-    let { data: dreamstudio, error } = await supabase
-      .from("dreamstudio")
-      .select("*");
-    var firstOne = await dreamstudio[0];
-    if (!firstOne) {
-      await interaction.reply({
-        content: `We are running out of credits, please wait until we solve the issue.`,
-        ephemeral: true,
-      });
-      return;
+    if (m == "Midjourney Diffusion") {
+      tags.push("mdjrny-v4 style");
     }
+    if (m == "Microworlds") {
+      tags.push("microworld render style");
+    }
+    prompt = `${prompt}, ${tags.join(", ")}`;
+    await interaction.deferReply();
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
-    try {
-      const res = await textToImg({
-        text_prompts: [
+
+    // dreamstudio checker
+    if (
+      m == "stable-diffusion-512-v2-1" ||
+      m == "stable-diffusion-512-v2-0" ||
+      m == "stable-diffusion-v1-5"
+    ) {
+      let { data: dreamstudio, error } = await supabase
+        .from("dreamstudio")
+        .select("*");
+      var firstOne = await dreamstudio[0];
+      if (!firstOne) {
+        await interaction.reply({
+          content: `We are running out of credits, please wait until we solve the issue.`,
+          ephemeral: true,
+        });
+        return;
+      }
+      try {
+        const res = await textToImg({
+          text_prompts: [
+            {
+              text: prompt,
+              weight: 1,
+            },
+            {
+              text: `${defaultNegPrompt}, ${negPrompt}`,
+              weight: -1,
+            },
+          ],
+          samples: number,
+          apiKey: firstOne.key,
+          steps: steps,
+          engineId: m,
+        });
+        var balance = await getBalance(firstOne.key);
+        if (balance.credits <= 10) {
+          const { data, error } = await supabase
+            .from("dreamstudio")
+            .delete()
+            .eq("key", firstOne.key);
+        }
+        var images = res.artifacts;
+        var imagesArr = images.map((file) => {
+          const sfbuff = Buffer.from(file.base64, "base64");
+          return new AttachmentBuilder(sfbuff, { name: "output.png" });
+        });
+        const { data, error } = await supabase.from("results").insert([
           {
-            text: prompt,
-            weight: 1,
+            prompt: prompt,
+            provider: m,
+            result: images,
+            uses: 1,
           },
-          {
-            text: `${defaultNegPrompt}, ${negPrompt}`,
-            weight: -1,
-          },
-        ],
-        samples: number,
-        apiKey: firstOne.key,
-        steps: steps,
-        engineId: m,
-      });
-      var balance = await getBalance(firstOne.key);
-      if (balance.credits <= 10) {
+        ]);
+        await interaction.editReply({
+          files: imagesArr,
+          content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
+        });
+        555;
+      } catch (e) {
         const { data, error } = await supabase
           .from("dreamstudio")
           .delete()
           .eq("key", firstOne.key);
+        await interaction.editReply({
+          content: `Something wrong happen:\n${e}`,
+          ephemeral: true,
+        });
       }
-      var images = res.artifacts;
-      var imagesArr = images.map((file) => {
-        const sfbuff = Buffer.from(file.base64, "base64");
-        return new AttachmentBuilder(sfbuff, { name: "output.png" });
-      });
-      const { data, error } = await supabase.from("results").insert([
-        {
-          prompt: prompt,
-          provider: m,
-          result: images,
-          uses: 1,
-        },
-      ]);
-      await interaction.editReply({
-        files: imagesArr,
-        content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
-      });
-      555;
-    } catch (e) {
-      const { data, error } = await supabase
-        .from("dreamstudio")
-        .delete()
-        .eq("key", firstOne.key);
-      await interaction.editReply({
-        content: `Something wrong happen:\n${e}`,
-        ephemeral: true,
-      });
+    } else {
+      try {
+        var generation = await generateImg(prompt, m, steps, number);
+        var interval = setInterval(async () => {
+          var status = await checkGeneration(generation);
+          if (status.done) {
+            clearInterval(interval);
+            await sendResults(
+              status.generations,
+              interaction,
+              m,
+              prompt,
+              steps
+            );
+          }
+        }, 15000);
+      } catch (e) {
+        await interaction.editReply({
+          content: `Something wrong happen:\n${e}`,
+          ephemeral: true,
+        });
+      }
     }
   },
 };
-
-async function checkBooster(interaction) {
-  if (
-    interaction.member.roles.cache.find((x) => x.id == "899763684337922088") ||
-    interaction.member.roles.cache.find((x) => x.id == "1061660141533007974")
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+async function sendResults(images, interaction, m, prompt, steps) {
+  var imagesArr = images.map((g, i) => {
+    const sfbuff = Buffer.from(g.img, "base64");
+    return new AttachmentBuilder(sfbuff, { name: "output.png" });
+  });
+  const { data, error } = await supabase.from("results").insert([
+    {
+      prompt: prompt,
+      provider: m,
+      result: images,
+      uses: 1,
+    },
+  ]);
+  console.log(imagesArr);
+  await interaction.editReply({
+    files: imagesArr,
+    content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
+  });
 }
