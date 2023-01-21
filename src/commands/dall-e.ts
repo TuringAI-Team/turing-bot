@@ -8,7 +8,7 @@ import { dalle } from "../modules/open.ai.js";
 import supabase from "../modules/supabase.js";
 
 export default {
-  cooldown: "3m",
+  cooldown: "4m",
   data: new SlashCommandBuilder()
     .setName("dall-e")
     .setDescription("Generate an image using dall-e 2")
@@ -31,7 +31,10 @@ export default {
         )
     ),
   async execute(interaction) {
-    if (interaction.channel.id != "1049275833379979365") {
+    if (
+      interaction.channel.id != "1049275833379979365" &&
+      interaction.guild.id == "899761438996963349"
+    ) {
       interaction.reply({
         content: `For use this utility go to <#1049275833379979365>`,
         ephemeral: true,
@@ -75,7 +78,9 @@ export default {
 
       await interaction.editReply({
         files: imgs,
-        content: `**Prompt:** ${interaction.options.getString("prompt")}`,
+        content: `${
+          interaction.user
+        }  **Prompt:** ${interaction.options.getString("prompt")}`,
       });
     } catch (e) {
       const { data, error } = await supabase

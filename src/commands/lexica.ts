@@ -19,7 +19,10 @@ export default {
         .setRequired(true)
     ),
   async execute(interaction) {
-    if (interaction.channel.id != "1061572478675193867") {
+    if (
+      interaction.channel.id != "1061572478675193867" &&
+      interaction.guild.id == "899761438996963349"
+    ) {
       interaction.reply({
         content: `For use this utility go to <#1061572478675193867>`,
         ephemeral: true,

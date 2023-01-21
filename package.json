@@ -14,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@supabase/supabase-js": "^2.1.1",
+    "@zeldafan0225/stable_horde": "^2.2.7",
+    "centra": "^2.6.0",
     "chalk": "4",
     "discord.js": "^14.7.1",
     "discord.js-pages": "^1.4.4",

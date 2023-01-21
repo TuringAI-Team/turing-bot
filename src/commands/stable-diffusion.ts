@@ -8,7 +8,7 @@ import { textToImg, getBalance } from "dreamstudio.js";
 import supabase from "../modules/supabase.js";
 
 export default {
-  cooldown: "3m",
+  cooldown: "2m",
   data: new SlashCommandBuilder()
     .setName("stable-diffusion")
     .setDescription("Generate an image using stable diffusion")
@@ -25,11 +25,11 @@ export default {
         .setRequired(true)
         .addChoices(
           {
-            name: "Stable diffusion v2.1(boosters only)",
+            name: "Stable diffusion v2.1(premium only)",
             value: "stable-diffusion-512-v2-1",
           },
           {
-            name: "Stable diffusion v2.0(boosters only)",
+            name: "Stable diffusion v2.0(premium only)",
             value: "stable-diffusion-512-v2-0",
           },
           {
@@ -59,8 +59,7 @@ export default {
         .addChoices(
           { name: "30", value: "30" },
           { name: "50", value: "50" },
-          { name: "100", value: "100" },
-          { name: "150", value: "150" }
+          { name: "100", value: "100" }
         )
     )
     .addStringOption((option) =>
@@ -86,7 +85,10 @@ export default {
     ),
   async execute(interaction) {
     var tags = [];
-    if (interaction.channel.id != "1049275551568896000") {
+    if (
+      interaction.channel.id != "1049275551568896000" &&
+      interaction.guild.id == "899761438996963349"
+    ) {
       interaction.reply({
         content: `For use this utility go to <#1049275551568896000>`,
         ephemeral: true,
@@ -212,15 +214,16 @@ export default {
       const { data, error } = await supabase.from("results").insert([
         {
           prompt: prompt,
-          provider: "stable-diffusion-v1-5",
+          provider: m,
           result: images,
           uses: 1,
         },
       ]);
       await interaction.editReply({
         files: imagesArr,
-        content: `**Prompt:** ${prompt} - ${steps}`,
+        content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
       });
+      555;
     } catch (e) {
       const { data, error } = await supabase
         .from("dreamstudio")

@@ -138,11 +138,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
             .eq("command", interaction.commandName);
           await command.execute(interaction);
         } else {
-          await interaction.reply(
-            `Please wait **${ms(
+          await interaction.reply({
+            content: `Please wait **${ms(
               count
-            )}** to use this command again.\nIf you want to **avoid this cooldown** you can **boost our server**.`
-          );
+            )}** to use this command again.\nIf you want to **avoid this cooldown** you can **boost our server**.`,
+            ephemeral: true,
+          });
         }
       } else {
         const { data, error } = await supabase
