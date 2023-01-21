@@ -48,6 +48,7 @@ export default {
       .select("*")
       .neq("key", null);
     var firstOne = await accounts[0];
+    console.log(firstOne.id);
     if (!firstOne) {
       await interaction.editReply({
         content: `We are running out of credits, please wait until we solve the issue.`,

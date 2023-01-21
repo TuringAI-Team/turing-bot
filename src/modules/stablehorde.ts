@@ -38,6 +38,5 @@ export async function generateImg(
 export async function checkGeneration(generation: any) {
   // check the status of your generation using the generations id
   const check = await stable_horde.getGenerationStatus(generation.id);
-  console.log(check);
   return check;
 }
