@@ -61,6 +61,14 @@ export default {
           {
             name: "Hentai Diffusion",
             value: "Hentai Diffusion",
+          },
+          {
+            name: "Waifu Diffusion",
+            value: "waifu_diffusion",
+          },
+          {
+            name: "Synthwave",
+            value: "Synthwave",
           }
         )
     )
@@ -194,6 +202,10 @@ export default {
     }
     if (m == "Dreamlike Diffusion") {
       tags.push("dreamlikeart");
+    }
+    if (m == "synthwave") {
+      tags.push("snthwve");
+      tags.push("style");
     }
     prompt = `${prompt}, ${tags.join(", ")}`;
     await interaction.deferReply();

@@ -29,7 +29,7 @@ export default {
     }
 
     var embed = new EmbedBuilder()
-      .setColor("#813479")
+      .setColor("#357b9f")
       .setTimestamp()
       .setTitle("ChatGPT Bot")
       .addFields([
