@@ -113,10 +113,9 @@ export default {
 
 async function sendResults(images, interaction, m, prompt, steps) {
   var imagesArr = images.map(async (g, i) => {
-    const req = await Centra(g.img, "get").send();
-    console.log(req.body);
-    const attachment = new AttachmentBuilder(req.body, {
-      name: `${g.seed ?? `image${i}`}.webp`,
+    const sfbuff = Buffer.from(g.img, "base64");
+    const attachment = new AttachmentBuilder(sfbuff, {
+      name: `${g.seed ?? `image${i}`}.png`,
     });
     return attachment;
   });
