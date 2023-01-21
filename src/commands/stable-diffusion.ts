@@ -258,6 +258,10 @@ export default {
               prompt,
               steps
             );
+          } else {
+            await interaction.editReply({
+              content: `Loading...(${status.wait_time}s)`,
+            });
           }
         }, 15000);
       } catch (e) {
@@ -282,7 +286,6 @@ async function sendResults(images, interaction, m, prompt, steps) {
       uses: 1,
     },
   ]);
-  console.log(imagesArr);
   await interaction.editReply({
     files: imagesArr,
     content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
