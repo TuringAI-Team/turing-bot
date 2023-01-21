@@ -31,11 +31,11 @@ export default {
         .setRequired(true)
         .addChoices(
           {
-            name: "Stable diffusion v2.1(premium only)",
+            name: "Stable diffusion v2.1(donators only)",
             value: "stable-diffusion-512-v2-1",
           },
           {
-            name: "Stable diffusion v2.0(premium only)",
+            name: "Stable diffusion v2.0(donators only)",
             value: "stable-diffusion-512-v2-0",
           },
           {
@@ -122,7 +122,7 @@ export default {
       var ispremium = await isPremium(interaction.user.id);
       if (!ispremium) {
         await interaction.reply({
-          content: `The model ${m} is only premium users.`,
+          content: `The model ${m} is only for donators. If you want to donate please conact us throught [our discord](https://dsc.gg/turing).`,
           ephemeral: true,
         });
         return;
