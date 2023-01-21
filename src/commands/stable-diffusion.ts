@@ -99,6 +99,7 @@ export default {
     var tags = [];
     if (
       interaction.channel.id != "1049275551568896000" &&
+      interaction.channel.id != "1066440546379386991" &&
       interaction.guild.id == "899761438996963349"
     ) {
       interaction.reply({
