@@ -115,9 +115,7 @@ async function sendResults(images, interaction, m, prompt, steps) {
   var imagesArr = images.map(async (g, i) => {
     const sfbuff = Buffer.from(g.img, "base64");
     console.log(sfbuff);
-    const attachment = new AttachmentBuilder(sfbuff, {
-      name: `${g.id}.webp`,
-    });
+    const attachment = new AttachmentBuilder(sfbuff);
     return attachment;
   });
   const { data, error } = await supabase.from("results").insert([
