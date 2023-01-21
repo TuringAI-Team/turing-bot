@@ -86,7 +86,7 @@ client.once(Events.ClientReady, async (c) => {
   await checkUsers();
   setInterval(async () => {
     await checkUsers();
-  });
+  }, 10 * 60 * 1000);
 });
 async function checkUsers() {
   var guilds = client.guilds.cache.map((guild) => guild);
