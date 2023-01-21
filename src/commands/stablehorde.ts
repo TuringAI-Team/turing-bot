@@ -96,10 +96,9 @@ export default {
       var images = [];
       var interval = setInterval(async () => {
         var status = await checkGeneration(generation);
-        console.log(status);
         if (status.done) {
-          await sendResults(status.generations, interaction, m, prompt, steps);
           clearInterval(interval);
+          await sendResults(status.generations, interaction, m, prompt, steps);
         }
       }, 15000);
     } catch (e) {
@@ -112,11 +111,9 @@ export default {
 };
 
 async function sendResults(images, interaction, m, prompt, steps) {
-  var imagesArr = images.map(async (g, i) => {
+  var imagesArr = images.map((g, i) => {
     const sfbuff = Buffer.from(g.img, "base64");
-    console.log(sfbuff);
-    const attachment = new AttachmentBuilder(sfbuff);
-    return attachment;
+    return new AttachmentBuilder(sfbuff, { name: "output.png" });
   });
   const { data, error } = await supabase.from("results").insert([
     {
@@ -126,6 +123,7 @@ async function sendResults(images, interaction, m, prompt, steps) {
       uses: 1,
     },
   ]);
+  console.log(imagesArr);
   await interaction.editReply({
     files: imagesArr,
     content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
