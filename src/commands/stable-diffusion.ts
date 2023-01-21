@@ -51,6 +51,10 @@ export default {
             value: "Dreamlike Photoreal",
           },
           {
+            name: "Dreamlike Diffusion",
+            value: "Dreamlike Diffusion",
+          },
+          {
             name: "ProtoGen",
             value: "ProtoGen",
           },
@@ -183,6 +187,13 @@ export default {
     }
     if (m == "Microworlds") {
       tags.push("microworld render style");
+    }
+    if (m == "Hentai Diffusion") {
+      tags.push("1girl");
+      tags.push("anime");
+    }
+    if (m == "Dreamlike Diffusion") {
+      tags.push("dreamlikeart");
     }
     prompt = `${prompt}, ${tags.join(", ")}`;
     await interaction.deferReply();
