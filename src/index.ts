@@ -73,36 +73,35 @@ for (const file of commandFiles) {
 
 // When the client is ready, run this code (only once)
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, async (c) => {
   console.log(
     chalk.white(`Ready! Logged in as `) + chalk.blue.bold(c.user.tag)
   );
-  /* Delete
-  rest
-    .get(
-      Routes.applicationGuildCommands(
-        process.env.CLIENT_ID,
-        process.env.GUILD_ID
-      )
-    )
-    .then((data) => {
-      const promises = [];
-      for (const command of data) {
-        const deleteUrl = `${Routes.applicationGuildCommands(
-          process.env.CLIENT_ID,
-          process.env.GUILD_ID
-        )}/${command.id}`;
-        promises.push(rest.delete(deleteUrl));
-      }
-      return Promise.all(promises);
-    });*/
   client.user.setPresence({
     activities: [
-      { name: `v0.0.4 | dsc.gg/turing`, type: ActivityType.Playing },
+      { name: `v0.0.6 | dsc.gg/turing`, type: ActivityType.Playing },
     ],
     status: "online",
   });
+  await checkUsers();
+  setInterval(async () => {
+    await checkUsers();
+  });
 });
+async function checkUsers() {
+  var guilds = client.guilds.cache.map((guild) => guild);
+  for (var i = 0; i < guilds.length; i++) {
+    var guild = client.guilds.cache.get(guilds[i].id);
+    var owner = await guild.fetchOwner();
+    if (guild.memberCount <= 20) {
+      var ch = client.channels.cache.get("1051425293715390484");
+      ch.send(
+        `I have left **${guild.name}**(${guild.id})\nIt has a total of **${guild.memberCount} members**.\nThe owner is: **${owner.user.tag}(${owner.id})**`
+      );
+      await guild.leave();
+    }
+  }
+}
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;

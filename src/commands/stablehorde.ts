@@ -94,9 +94,10 @@ export default {
     prompt = `${prompt}, ${tags.join(", ")}`;
 
     await interaction.deferReply();
+    console.log(prompt);
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
     try {
-      var generation = await generateImg(prompt, m);
+      var generation = await generateImg(prompt, m, steps, number);
       var images = [];
       var interval = setInterval(async () => {
         var status = await checkGeneration(generation);

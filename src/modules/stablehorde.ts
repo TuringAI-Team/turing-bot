@@ -12,7 +12,12 @@ export async function getModels() {
   return models;
 }
 
-export async function generateImg(prompt: string, model: string) {
+export async function generateImg(
+  prompt: string,
+  model: string,
+  steps: number,
+  amount: number
+) {
   const generation = await stable_horde.postAsyncGenerate({
     prompt: prompt,
     nsfw: false,
@@ -20,6 +25,10 @@ export async function generateImg(prompt: string, model: string) {
     r2: true,
     shared: true,
     models: [model],
+    params: {
+      n: amount,
+      steps: steps,
+    },
   });
 
   return generation;
