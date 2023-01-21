@@ -42,18 +42,14 @@ export default {
       return;
     }
     const number = parseInt(interaction.options.getString("number"));
-    await interaction.reply({
-      content: `Generating your results for: **${interaction.options.getString(
-        "prompt"
-      )}**`,
-    });
+    await interaction.deferReply();
     let { data: accounts, error } = await supabase
       .from("accounts")
       .select("*")
       .neq("key", null);
     var firstOne = await accounts[0];
     if (!firstOne) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `We are running out of credits, please wait until we solve the issue.`,
         ephemeral: true,
       });
