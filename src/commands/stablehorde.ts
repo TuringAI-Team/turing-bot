@@ -114,8 +114,9 @@ export default {
 async function sendResults(images, interaction, m, prompt, steps) {
   var imagesArr = images.map(async (g, i) => {
     const sfbuff = Buffer.from(g.img, "base64");
+    console.log(sfbuff);
     const attachment = new AttachmentBuilder(sfbuff, {
-      name: `${g.seed ?? `image${i}`}.png`,
+      name: `${g.id}.webp`,
     });
     return attachment;
   });
