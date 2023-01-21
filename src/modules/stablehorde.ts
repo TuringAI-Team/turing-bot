@@ -22,7 +22,7 @@ export async function generateImg(
     prompt: prompt,
     nsfw: false,
     censor_nsfw: true,
-    r2: true,
+    r2: false,
     shared: true,
     models: [model],
     params: {

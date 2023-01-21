@@ -40,12 +40,7 @@ export default {
         .setName("number")
         .setDescription("The number of images you want")
         .setRequired(true)
-        .addChoices(
-          { name: "One", value: "1" },
-          { name: "Two", value: "2" },
-          { name: "Three", value: "3" },
-          { name: "Four", value: "4" }
-        )
+        .addChoices({ name: "One", value: "1" }, { name: "Two", value: "2" })
     )
     .addStringOption((option) =>
       option
@@ -106,7 +101,7 @@ export default {
           await sendResults(status.generations, interaction, m, prompt, steps);
           clearInterval(interval);
         }
-      }, 10000);
+      }, 15000);
     } catch (e) {
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
