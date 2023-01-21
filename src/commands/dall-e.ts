@@ -8,7 +8,7 @@ import { dalle } from "../modules/open.ai.js";
 import supabase from "../modules/supabase.js";
 
 export default {
-  cooldown: "4m",
+  cooldown: "5m",
   data: new SlashCommandBuilder()
     .setName("dall-e")
     .setDescription("Generate an image using dall-e 2")
@@ -23,12 +23,7 @@ export default {
         .setName("number")
         .setDescription("The number of images you want")
         .setRequired(true)
-        .addChoices(
-          { name: "One", value: "1" },
-          { name: "Two", value: "2" },
-          { name: "Three", value: "3" },
-          { name: "Four", value: "4" }
-        )
+        .addChoices({ name: "One", value: "1" }, { name: "Two", value: "2" })
     ),
   async execute(interaction) {
     if (
