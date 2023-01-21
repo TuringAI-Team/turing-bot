@@ -50,6 +50,7 @@ for (const file of commandFiles) {
 // Construct and prepare an instance of the REST module
 
 // and deploy your commands!
+
 (async () => {
   try {
     console.log(
