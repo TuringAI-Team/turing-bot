@@ -90,7 +90,7 @@ async function checkUsers() {
   for (var i = 0; i < guilds.length; i++) {
     var guild = client.guilds.cache.get(guilds[i].id);
     var owner = await guild.fetchOwner();
-    if (guild.memberCount <= 20) {
+    if (guild.memberCount <= 4) {
       var ch = client.channels.cache.get("1051425293715390484");
       ch.send(
         `I have left **${guild.name}**(${guild.id})\nIt has a total of **${guild.memberCount} members**.\nThe owner is: **${owner.user.tag}(${owner.id})**`
