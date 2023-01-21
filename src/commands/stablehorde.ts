@@ -86,6 +86,9 @@ export default {
     if (m == "Midjourney Diffusion") {
       tags.push("mdjrny-v4 style");
     }
+    if (m == "Microworlds") {
+      tags.push("microworld render style");
+    }
     prompt = `${prompt}, ${tags.join(", ")}`;
 
     await interaction.deferReply();
