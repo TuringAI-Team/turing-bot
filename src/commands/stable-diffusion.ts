@@ -45,7 +45,19 @@ export default {
           { name: "Microworlds", value: "Microworlds" },
           { name: "Anything Diffusion", value: "Anything Diffusion" },
           { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
-          { name: "Dreamshaper", value: "Dreamshaper" }
+          { name: "Dreamshaper", value: "Dreamshaper" },
+          {
+            name: "Dreamlike Photoreal",
+            value: "Dreamlike Photoreal",
+          },
+          {
+            name: "ProtoGen",
+            value: "ProtoGen",
+          },
+          {
+            name: "Hentai Diffusion",
+            value: "Hentai Diffusion",
+          }
         )
     )
     .addStringOption((option) =>
@@ -174,13 +186,14 @@ export default {
     prompt = `${prompt}, ${tags.join(", ")}`;
     await interaction.deferReply();
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
-
-    // dreamstudio checker
+    var nsfw = false;
+    if (interaction.channel.nsfw) nsfw = true;
     if (
       m == "stable-diffusion-512-v2-1" ||
       m == "stable-diffusion-512-v2-0" ||
       m == "stable-diffusion-v1-5"
     ) {
+      // dreamstudio checker
       let { data: dreamstudio, error } = await supabase
         .from("dreamstudio")
         .select("*");
@@ -246,7 +259,7 @@ export default {
       }
     } else {
       try {
-        var generation = await generateImg(prompt, m, steps, number);
+        var generation = await generateImg(prompt, m, steps, number, nsfw);
         var interval = setInterval(async () => {
           var status = await checkGeneration(generation);
           if (status.done) {

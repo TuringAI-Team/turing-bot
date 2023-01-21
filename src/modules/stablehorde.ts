@@ -16,12 +16,13 @@ export async function generateImg(
   prompt: string,
   model: string,
   steps: number,
-  amount: number
+  amount: number,
+  nsfw: boolean
 ) {
   const generation = await stable_horde.postAsyncGenerate({
     prompt: prompt,
-    nsfw: false,
-    censor_nsfw: true,
+    nsfw: nsfw,
+    censor_nsfw: nsfw == true ? false : true,
     r2: false,
     shared: true,
     models: [model],
