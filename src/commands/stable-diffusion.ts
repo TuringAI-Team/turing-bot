@@ -30,7 +30,7 @@ export default {
         .setDescription("The stable diffusion model you want to use")
         .setRequired(true)
         .addChoices(
-          {
+          /*  {
             name: "Stable diffusion v2.1(donators only)",
             value: "stable-diffusion-512-v2-1",
           },
@@ -41,11 +41,11 @@ export default {
           {
             name: "Stable diffusion v1.5 (default option)",
             value: "stable-diffusion-v1-5",
-          },
+          },*/
           { name: "Microworlds", value: "Microworlds" },
           { name: "Anything Diffusion", value: "Anything Diffusion" },
           { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
-          { name: "Dreamshaper", value: "Dreamshaper" },
+          { name: "Dreamshaper", value: "Dreamshaper(default option)" },
           {
             name: "Dreamlike Photoreal",
             value: "Dreamlike Photoreal",
