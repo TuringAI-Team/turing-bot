@@ -285,6 +285,13 @@ export default {
       try {
         var generation = await generateImg(prompt, m, steps, number, nsfw);
         console.log(generation);
+        if (generation.message) {
+          await interaction.editReply({
+            content: `Something wrong happen.`,
+            ephemeral: true,
+          });
+          return;
+        }
         var interval = setInterval(async () => {
           var status = await checkGeneration(generation);
           if (status.done) {
