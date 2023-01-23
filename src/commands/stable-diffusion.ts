@@ -147,7 +147,7 @@ export default {
       var ispremium = await isPremium(interaction.user.id);
       if (!ispremium) {
         await interaction.reply({
-          content: `The model ${m} is only for donators. If you want to donate please conact us throught [our discord](https://dsc.gg/turing).`,
+          content: `The model ${m} is only for donators. If you want to donate please conact us throught [our discord](https://discord.gg/turing-ai-899761438996963349) .`,
           ephemeral: true,
         });
         return;

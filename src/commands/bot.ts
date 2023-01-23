@@ -29,9 +29,9 @@ export default {
     }
 
     var embed = new EmbedBuilder()
-      .setColor("#357b9f")
+      .setColor("#347d9c")
       .setTimestamp()
-      .setTitle("ChatGPT Bot")
+      .setTitle("Turing Bot")
       .addFields([
         {
           name: "Ping",
@@ -72,10 +72,7 @@ export default {
           value: `v0.0.5`,
           inline: true,
         },
-      ])
-      .setFooter({
-        text: "This is not an official bot.",
-      });
+      ]);
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setLabel("Add me")
@@ -85,7 +82,7 @@ export default {
         .setStyle(ButtonStyle.Link),
       new ButtonBuilder()
         .setLabel("Support server")
-        .setURL("https://dsc.gg/turing")
+        .setURL("https://discord.gg/turing-ai-899761438996963349")
         .setStyle(ButtonStyle.Link),
       new ButtonBuilder()
         .setLabel("Github Repo")

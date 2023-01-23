@@ -140,7 +140,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           await interaction.reply({
             content: `Please wait **${ms(
               count
-            )}** to use this command again.\nIf you want to **avoid this cooldown** you can **donate to get premium**. If you want to donate please conact us throught [our discord](https://dsc.gg/turing).`,
+            )}** to use this command again.\nIf you want to **avoid this cooldown** you can **donate to get premium**. If you want to donate please conact us throught [our discord](https://discord.gg/turing-ai-899761438996963349).`,
             ephemeral: true,
           });
         }
