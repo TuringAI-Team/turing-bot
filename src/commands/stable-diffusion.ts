@@ -296,6 +296,13 @@ export default {
               steps
             );
           } else {
+            if (status.wait_time == undefined) {
+              clearInterval(interval);
+              await interaction.editReply({
+                content: `Something wrong happen.`,
+                ephemeral: true,
+              });
+            }
             await interaction.editReply({
               content: `Loading...(${status.wait_time}s)`,
             });
