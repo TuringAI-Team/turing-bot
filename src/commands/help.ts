@@ -21,7 +21,7 @@ export default {
       fields.push(newField);
     }
     var embed = new EmbedBuilder()
-      .setColor("#357b9f")
+      .setColor("#347d9c")
       .setTimestamp()
       .setTitle("Turing Help")
       .addFields(fields)

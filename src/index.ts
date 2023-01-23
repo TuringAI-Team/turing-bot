@@ -135,7 +135,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
             .update({ created_at: new Date() })
             .eq("userId", interaction.user.id)
             .eq("command", interaction.commandName);
-          await command.execute(interaction, client);
+          await command.execute(interaction, client, commands);
         } else {
           await interaction.reply({
             content: `Please wait **${ms(
@@ -150,10 +150,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
           .insert([
             { userId: interaction.user.id, command: interaction.commandName },
           ]);
-        await command.execute(interaction, client);
+        await command.execute(interaction, client, commands);
       }
     } else {
-      await command.execute(interaction, client);
+      await command.execute(interaction, client, commands);
     }
   } catch (error) {
     console.error(error);

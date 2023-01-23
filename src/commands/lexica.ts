@@ -49,7 +49,7 @@ export default {
                 .setImage(el.src);
             })
           )
-          .setColor("#5865F2")
+          .setColor("#347d9c")
           .build();
       }
     } catch (e) {
