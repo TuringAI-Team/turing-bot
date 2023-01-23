@@ -304,6 +304,7 @@ export default {
               steps
             );
           } else {
+            console.log(status);
             if (status.wait_time == undefined) {
               clearInterval(interval);
               await interaction.editReply({
