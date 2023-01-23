@@ -284,6 +284,7 @@ export default {
     } else {
       try {
         var generation = await generateImg(prompt, m, steps, number, nsfw);
+        console.log(generation);
         var interval = setInterval(async () => {
           var status = await checkGeneration(generation);
           if (status.done) {
