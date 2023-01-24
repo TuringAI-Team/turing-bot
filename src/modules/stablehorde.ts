@@ -19,6 +19,13 @@ export async function generateImg(
   amount: number,
   nsfw: boolean
 ) {
+  var passFilter = await filter(prompt, model);
+  if (!passFilter) {
+    return {
+      message:
+        "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
+    };
+  }
   const generation = await stable_horde.postAsyncGenerate({
     prompt: prompt,
     nsfw: nsfw,
@@ -33,6 +40,28 @@ export async function generateImg(
   });
 
   return generation;
+}
+
+async function filter(prompt, model) {
+  var youngWords = [
+    "kid",
+    "children",
+    "child",
+    "girl",
+    "boy",
+    "baby",
+    "young",
+    "teen",
+  ];
+  var nsfwModels = ["Hentai Diffusion", "waifu_diffusion"];
+  var nsfwWords = ["naked", "nude", "uncensored"];
+  var isNsfw = false;
+  var isYoung = false;
+  if (nsfwModels.find((x) => x == model)) isNsfw = true;
+  if (nsfwWords.some((v) => prompt.includes(v))) isNsfw = true;
+  if (youngWords.some((v) => prompt.includes(v))) isYoung = true;
+  if (isYoung && isNsfw) return false;
+  return true;
 }
 
 export async function checkGeneration(generation: any) {

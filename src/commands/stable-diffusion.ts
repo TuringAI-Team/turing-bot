@@ -287,7 +287,7 @@ export default {
         console.log(generation);
         if (generation.message) {
           await interaction.editReply({
-            content: `Something wrong happen.`,
+            content: `Something wrong happen:\n${generation.message}`,
             ephemeral: true,
           });
           return;
