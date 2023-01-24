@@ -45,7 +45,7 @@ export default {
           { name: "Microworlds", value: "Microworlds" },
           { name: "Anything Diffusion", value: "Anything Diffusion" },
           { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
-          { name: "Dreamshaper", value: "Dreamshaper(default option)" },
+          { name: "Dreamshaper(default option)", value: "Dreamshaper" },
           {
             name: "Dreamlike Photoreal",
             value: "Dreamlike Photoreal",
@@ -293,27 +293,51 @@ export default {
           return;
         }
         var interval = setInterval(async () => {
-          var status = await checkGeneration(generation);
-          if (status.done) {
-            clearInterval(interval);
-            await sendResults(
-              status.generations,
-              interaction,
-              m,
-              prompt,
-              steps
-            );
-          } else {
-            console.log(status);
-            if (status.wait_time == undefined) {
+          try {
+            var status = await checkGeneration(generation);
+            if (status.done) {
               clearInterval(interval);
-              await interaction.editReply({
-                content: `Something wrong happen.`,
-                ephemeral: true,
-              });
+              const { data, error } = await supabase.from("results").insert([
+                {
+                  prompt: prompt,
+                  provider: m,
+                  result: status.generations,
+                  uses: 1,
+                },
+              ]);
+              await sendResults(
+                status.generations,
+                interaction,
+                m,
+                prompt,
+                steps
+              );
+            } else {
+              console.log(status);
+              if (status.wait_time == undefined) {
+                clearInterval(interval);
+                await interaction.editReply({
+                  content: `Something wrong happen.`,
+                  ephemeral: true,
+                });
+              }
+              try {
+                await interaction.editReply({
+                  content: `Loading...(${status.wait_time}s)`,
+                });
+              } catch (err) {
+                clearInterval(interval);
+                await interaction.editReply({
+                  content: `Something wrong happen.`,
+                  ephemeral: true,
+                });
+              }
             }
+          } catch (err) {
+            clearInterval(interval);
             await interaction.editReply({
-              content: `Loading...(${status.wait_time}s)`,
+              content: `Something wrong happen.`,
+              ephemeral: true,
             });
           }
         }, 15000);
