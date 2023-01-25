@@ -40,8 +40,9 @@ export default {
       })
       .eq("id", generationId);
 
-    await interaction.reply(
-      `${interaction.user} image rated(${rate}/10) successfully, thanks.`
-    );
+    await interaction.reply({
+      content: `${interaction.user} image rated(${rate}/10) successfully.`,
+      ephemeral: true,
+    });
   },
 };
