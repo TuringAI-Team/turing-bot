@@ -6,7 +6,7 @@ const stable_horde = new StableHorde({
   },
   default_token: process.env.STABLE_HORDE,
 });
-
+export default stable_horde;
 export async function getModels() {
   var models = await stable_horde.getModels();
   return models;
@@ -45,6 +45,8 @@ export async function generateImg(
 async function filter(prompt, model) {
   var youngWords = [
     "kid",
+    "kids",
+    "lolis",
     "children",
     "child",
     "girl",
@@ -52,6 +54,27 @@ async function filter(prompt, model) {
     "baby",
     "young",
     "teen",
+    "teenager",
+    "niñita",
+    "years",
+    "16yo",
+    "year old",
+    "underage",
+    "underaged",
+    "under-age",
+    "under-aged",
+    "juvenile",
+    "minor",
+    "underaged-minor",
+    "youngster",
+    "young teen",
+    "preteen",
+    "pre-teen",
+    "infant",
+    "toddler",
+    "baby",
+    "prepubescent",
+    "minor-aged",
   ];
   var nsfwModels = ["Hentai Diffusion", "waifu_diffusion"];
   var nsfwWords = ["naked", "nude", "uncensored"];
@@ -59,6 +82,7 @@ async function filter(prompt, model) {
   var isYoung = false;
   if (nsfwModels.find((x) => x == model)) isNsfw = true;
   if (nsfwWords.some((v) => prompt.includes(v))) isNsfw = true;
+  console.log(youngWords.some((v) => prompt.includes(v)));
   if (youngWords.some((v) => prompt.includes(v))) isYoung = true;
   if (isYoung && isNsfw) return false;
   return true;

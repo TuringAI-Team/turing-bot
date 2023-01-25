@@ -2,6 +2,10 @@ import {
   SlashCommandBuilder,
   AttachmentBuilder,
   EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  StringSelectMenuBuilder,
 } from "discord.js";
 import "dotenv/config";
 import { textToImg, getBalance } from "dreamstudio.js";
@@ -30,22 +34,22 @@ export default {
         .setDescription("The stable diffusion model you want to use")
         .setRequired(true)
         .addChoices(
-          /*  {
-            name: "Stable diffusion v2.1(donators only)",
-            value: "stable-diffusion-512-v2-1",
+          {
+            name: "Stable diffusion v2.1",
+            value: "stable_diffusion_2.1",
           },
           {
-            name: "Stable diffusion v2.0(donators only)",
-            value: "stable-diffusion-512-v2-0",
+            name: "Stable diffusion v2.0",
+            value: "stable_diffusion_2.0",
           },
           {
-            name: "Stable diffusion v1.5 (default option)",
-            value: "stable-diffusion-v1-5",
-          },*/
+            name: "Stable diffusion",
+            value: "stable_diffusion",
+          },
           { name: "Microworlds", value: "Microworlds" },
           { name: "Anything Diffusion", value: "Anything Diffusion" },
           { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
-          { name: "Dreamshaper(default option)", value: "Dreamshaper" },
+          { name: "Dreamshaper", value: "Dreamshaper" },
           {
             name: "Dreamlike Photoreal",
             value: "Dreamlike Photoreal",
@@ -212,159 +216,142 @@ export default {
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
     var nsfw = false;
     if (interaction.channel.nsfw) nsfw = true;
-    if (
-      m == "stable-diffusion-512-v2-1" ||
-      m == "stable-diffusion-512-v2-0" ||
-      m == "stable-diffusion-v1-5"
-    ) {
-      // dreamstudio checker
-      let { data: dreamstudio, error } = await supabase
-        .from("dreamstudio")
-        .select("*");
-      var firstOne = await dreamstudio[0];
-      if (!firstOne) {
-        await interaction.reply({
-          content: `We are running out of credits, please wait until we solve the issue.`,
+    try {
+      var generation = await generateImg(prompt, m, steps, number, nsfw);
+      if (generation.message) {
+        await interaction.editReply({
+          content: `Something wrong happen:\n${generation.message}`,
           ephemeral: true,
         });
         return;
       }
-      try {
-        const res = await textToImg({
-          text_prompts: [
-            {
-              text: prompt,
-              weight: 1,
-            },
-            {
-              text: `${defaultNegPrompt}, ${negPrompt}`,
-              weight: -1,
-            },
-          ],
-          samples: number,
-          apiKey: firstOne.key,
-          steps: steps,
-          engineId: m,
-        });
-        var balance = await getBalance(firstOne.key);
-        if (balance.credits <= 10) {
-          const { data, error } = await supabase
-            .from("dreamstudio")
-            .delete()
-            .eq("key", firstOne.key);
-        }
-        var images = res.artifacts;
-        var imagesArr = images.map((file) => {
-          const sfbuff = Buffer.from(file.base64, "base64");
-          return new AttachmentBuilder(sfbuff, { name: "output.png" });
-        });
-        const { data, error } = await supabase.from("results").insert([
-          {
-            prompt: prompt,
-            provider: m,
-            result: images,
-            uses: 1,
-          },
-        ]);
-        await interaction.editReply({
-          files: imagesArr,
-          content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
-        });
-        555;
-      } catch (e) {
-        const { data, error } = await supabase
-          .from("dreamstudio")
-          .delete()
-          .eq("key", firstOne.key);
-        await interaction.editReply({
-          content: `Something wrong happen:\n${e}`,
-          ephemeral: true,
-        });
-      }
-    } else {
-      try {
-        var generation = await generateImg(prompt, m, steps, number, nsfw);
-        console.log(generation);
-        if (generation.message) {
+      var interval = setInterval(async () => {
+        try {
+          var status = await checkGeneration(generation);
+          if (status.done) {
+            clearInterval(interval);
+            const { data, error } = await supabase.from("results").insert([
+              {
+                prompt: prompt,
+                provider: m,
+                result: status.generations,
+                uses: 1,
+              },
+            ]);
+            await sendResults(
+              status.generations,
+              interaction,
+              m,
+              prompt,
+              steps,
+              generation.id
+            );
+          } else {
+            console.log(status);
+            if (status.wait_time == undefined) {
+              clearInterval(interval);
+              await interaction.editReply({
+                content: `Something wrong happen.`,
+                ephemeral: true,
+              });
+            }
+            try {
+              await interaction.editReply({
+                content: `Loading...(${status.wait_time}s)`,
+              });
+            } catch (err) {
+              clearInterval(interval);
+              await interaction.editReply({
+                content: `Something wrong happen.`,
+                ephemeral: true,
+              });
+            }
+          }
+        } catch (err) {
+          clearInterval(interval);
           await interaction.editReply({
-            content: `Something wrong happen:\n${generation.message}`,
+            content: `Something wrong happen.`,
             ephemeral: true,
           });
-          return;
         }
-        var interval = setInterval(async () => {
-          try {
-            var status = await checkGeneration(generation);
-            if (status.done) {
-              clearInterval(interval);
-              const { data, error } = await supabase.from("results").insert([
-                {
-                  prompt: prompt,
-                  provider: m,
-                  result: status.generations,
-                  uses: 1,
-                },
-              ]);
-              await sendResults(
-                status.generations,
-                interaction,
-                m,
-                prompt,
-                steps
-              );
-            } else {
-              console.log(status);
-              if (status.wait_time == undefined) {
-                clearInterval(interval);
-                await interaction.editReply({
-                  content: `Something wrong happen.`,
-                  ephemeral: true,
-                });
-              }
-              try {
-                await interaction.editReply({
-                  content: `Loading...(${status.wait_time}s)`,
-                });
-              } catch (err) {
-                clearInterval(interval);
-                await interaction.editReply({
-                  content: `Something wrong happen.`,
-                  ephemeral: true,
-                });
-              }
-            }
-          } catch (err) {
-            clearInterval(interval);
-            await interaction.editReply({
-              content: `Something wrong happen.`,
-              ephemeral: true,
-            });
-          }
-        }, 15000);
-      } catch (e) {
-        await interaction.editReply({
-          content: `Something wrong happen:\n${e}`,
-          ephemeral: true,
-        });
-      }
+      }, 15000);
+    } catch (e) {
+      await interaction.editReply({
+        content: `Something wrong happen:\n${e}`,
+        ephemeral: true,
+      });
     }
   },
 };
-async function sendResults(images, interaction, m, prompt, steps) {
+async function sendResults(images, interaction, m, prompt, steps, id: string) {
   var imagesArr = images.map((g, i) => {
     const sfbuff = Buffer.from(g.img, "base64");
     return new AttachmentBuilder(sfbuff, { name: "output.png" });
   });
   const { data, error } = await supabase.from("results").insert([
     {
+      id: id,
       prompt: prompt,
       provider: m,
       result: images,
       uses: 1,
     },
   ]);
+
+  const row = new ActionRowBuilder();
+  for (var i = 0; i < images.length; i++) {
+    var menu = new StringSelectMenuBuilder()
+      .setCustomId(`rateMenu_${id}_${images[i].id}`)
+      .setMinValues(1)
+      .setMaxValues(1)
+      .setOptions(
+        {
+          value: "1",
+          label: "1/10",
+        },
+        {
+          value: "2",
+          label: "2/10",
+        },
+        {
+          value: "3",
+          label: "3/10",
+        },
+        {
+          value: "4",
+          label: "4/10",
+        },
+        {
+          value: "5",
+          label: "5/10",
+        },
+        {
+          value: "6",
+          label: "6/10",
+        },
+        {
+          value: "7",
+          label: "7/10",
+        },
+        {
+          value: "8",
+          label: "8/10",
+        },
+        {
+          value: "9",
+          label: "9/10",
+        },
+        {
+          value: "10",
+          label: "10/10",
+        }
+      )
+      .setPlaceholder(`Rate the result(${i + 1}) with a number from 1 to 10`);
+    row.addComponents(menu);
+  }
   await interaction.editReply({
     files: imagesArr,
+    components: [row],
     content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
   });
 }
