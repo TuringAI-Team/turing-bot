@@ -41,7 +41,7 @@ export default {
       .eq("id", generationId);
 
     await interaction.reply(
-      `${interaction.user} image rated successfully, thanks.`
+      `${interaction.user} image rated(${rate}/10) successfully, thanks.`
     );
   },
 };
