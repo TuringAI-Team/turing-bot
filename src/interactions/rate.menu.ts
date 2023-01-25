@@ -16,7 +16,7 @@ export default {
       .eq("id", generationId)
       .eq("rated", true);
     if (data && data[0]) {
-      await interaction.editReply({
+      await interaction.followUp({
         content: `This image have already been rated`,
         ephemeral: true,
       });
