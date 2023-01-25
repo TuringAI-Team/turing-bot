@@ -244,7 +244,8 @@ export default {
               m,
               prompt,
               steps,
-              generation.id
+              generation.id,
+              interaction.user.id
             );
           } else {
             console.log(status);
@@ -283,7 +284,15 @@ export default {
     }
   },
 };
-async function sendResults(images, interaction, m, prompt, steps, id: string) {
+async function sendResults(
+  images,
+  interaction,
+  m,
+  prompt,
+  steps,
+  id: string,
+  userId
+) {
   var imagesArr = images.map((g, i) => {
     const sfbuff = Buffer.from(g.img, "base64");
     return new AttachmentBuilder(sfbuff, { name: "output.png" });
@@ -301,7 +310,7 @@ async function sendResults(images, interaction, m, prompt, steps, id: string) {
   const row = new ActionRowBuilder();
   for (var i = 0; i < images.length; i++) {
     var menu = new StringSelectMenuBuilder()
-      .setCustomId(`rateMenu_${id}_${images[i].id}`)
+      .setCustomId(`rateMenu_${id}_${images[i].id}_${userId}`)
       .setMinValues(1)
       .setMaxValues(1)
       .setOptions(

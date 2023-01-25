@@ -7,16 +7,22 @@ export default {
     customId: "rateMenu",
     description: "Select menu for rating an image",
   },
-  async execute(interaction, client, generationId, imageId) {
-    await interaction.deferReply();
+  async execute(interaction, client, generationId, imageId, userId) {
     const rate = interaction.values[0];
+    if (userId != interaction.user.id) {
+      await interaction.reply({
+        content: `You can't rate a image that you haven't generated.`,
+        ephemeral: true,
+      });
+      return;
+    }
     var { data, error } = await supabase
       .from("results")
       .select("*")
       .eq("id", generationId)
       .eq("rated", true);
     if (data && data[0]) {
-      await interaction.followUp({
+      await interaction.reply({
         content: `This image have already been rated`,
         ephemeral: true,
       });
@@ -34,7 +40,7 @@ export default {
       })
       .eq("id", generationId);
 
-    await interaction.editReply(
+    await interaction.reply(
       `${interaction.user} image rated successfully, thanks.`
     );
   },
