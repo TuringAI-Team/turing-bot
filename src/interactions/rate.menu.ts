@@ -11,7 +11,7 @@ export default {
     const rate = interaction.values[0];
     if (userId != interaction.user.id) {
       await interaction.reply({
-        content: `You can't rate a image that you haven't generated.`,
+        content: `You can't rate a image that you haven't generate.`,
         ephemeral: true,
       });
       return;

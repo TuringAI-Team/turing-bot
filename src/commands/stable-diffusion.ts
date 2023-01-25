@@ -250,6 +250,7 @@ export default {
           } else {
             console.log(status);
             if (status.wait_time == undefined) {
+              console.log("No wait time");
               clearInterval(interval);
               await interaction.editReply({
                 content: `Something wrong happen.`,
@@ -261,6 +262,7 @@ export default {
                 content: `Loading...(${status.wait_time}s)`,
               });
             } catch (err) {
+              console.log(err);
               clearInterval(interval);
               await interaction.editReply({
                 content: `Something wrong happen.`,
@@ -269,6 +271,7 @@ export default {
             }
           }
         } catch (err) {
+          console.log(err);
           clearInterval(interval);
           await interaction.editReply({
             content: `Something wrong happen.`,
