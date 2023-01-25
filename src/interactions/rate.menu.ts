@@ -4,7 +4,7 @@ import supabase from "../modules/supabase.js";
 
 export default {
   data: {
-    customId: "rateMenu",
+    customId: "rate",
     description: "Select menu for rating an image",
   },
   async execute(interaction, client, generationId, imageId, userId) {
