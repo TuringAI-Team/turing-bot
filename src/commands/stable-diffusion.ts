@@ -114,6 +114,7 @@ export default {
   async execute(interaction, client) {
     var tags = [];
     if (
+      interaction.channel &&
       interaction.channel.id != "1049275551568896000" &&
       interaction.channel.id != "1066440546379386991" &&
       interaction.guild.id == "899761438996963349"
