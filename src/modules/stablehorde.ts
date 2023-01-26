@@ -1,4 +1,5 @@
 import StableHorde from "@zeldafan0225/stable_horde";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 const stable_horde = new StableHorde({
   cache_interval: 1000 * 10,
   cache: {
@@ -107,4 +108,35 @@ export async function checkGeneration(generation: any) {
   // check the status of your generation using the generations id
   const check = await stable_horde.getGenerationStatus(generation.id);
   return check;
+}
+
+export async function generateRateRow(generationId, userId, imageId) {
+  const row = new ActionRowBuilder();
+  const btn1 = new ButtonBuilder() //1
+    .setCustomId(`r_${generationId}_${imageId}_${userId}_1`)
+    .setStyle(ButtonStyle.Secondary)
+    .setLabel("😖");
+  row.addComponents(btn1);
+  //\😒  \😀 \😍️️️️️️\☹️
+  const btn2 = new ButtonBuilder() //3
+    .setCustomId(`r_${generationId}_${imageId}_${userId}_3`)
+    .setStyle(ButtonStyle.Secondary)
+    .setLabel("☹️");
+  row.addComponents(btn2);
+  const btn3 = new ButtonBuilder() //5
+    .setCustomId(`r_${generationId}_${imageId}_${userId}_5`)
+    .setStyle(ButtonStyle.Secondary)
+    .setLabel("😒");
+  row.addComponents(btn3);
+  const btn4 = new ButtonBuilder() //7
+    .setCustomId(`r_${generationId}_${imageId}_${userId}_7`)
+    .setStyle(ButtonStyle.Secondary)
+    .setLabel("😀");
+  row.addComponents(btn4);
+  const btn5 = new ButtonBuilder() //9
+    .setCustomId(`r_${generationId}_${imageId}_${userId}_9`)
+    .setStyle(ButtonStyle.Secondary)
+    .setLabel("😍️️️️️️");
+  row.addComponents(btn5);
+  return row;
 }

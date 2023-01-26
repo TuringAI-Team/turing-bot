@@ -4,14 +4,13 @@ import supabase from "../modules/supabase.js";
 
 export default {
   data: {
-    customId: "rate",
-    description: "Select menu for rating an image",
+    customId: "r",
+    description: "Button for rating images",
   },
-  async execute(interaction, client, generationId, imageId, userId) {
-    const rate = interaction.values[0];
+  async execute(interaction, client, generationId, imageId, userId, rate) {
     if (userId != interaction.user.id) {
       await interaction.reply({
-        content: `You can't rate a image that you haven't generate.`,
+        content: `You can't rate a image that you haven't generated.`,
         ephemeral: true,
       });
       return;
@@ -32,7 +31,15 @@ export default {
       .postRating(generationId, {
         ratings: [{ id: imageId, rating: parseInt(rate) }],
       })
-      .catch(console.error);
+      .catch(async (error) => {
+        if (error.message == "This generation appears already rated") {
+          await interaction.reply({
+            content: `This image have already been rated`,
+            ephemeral: true,
+          });
+          return;
+        }
+      });
     await supabase
       .from("results")
       .update({

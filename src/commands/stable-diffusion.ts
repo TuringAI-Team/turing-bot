@@ -16,6 +16,9 @@ import {
   getModels,
 } from "../modules/stablehorde.js";
 import { isPremium } from "../modules/premium.js";
+import { createCanvas, loadImage, Image } from "canvas";
+import sharp from "sharp";
+import { generateRateRow } from "../modules/stablehorde.js";
 
 export default {
   cooldown: "2m",
@@ -263,7 +266,6 @@ export default {
               interaction.user.id
             );
           } else {
-            console.log(status);
             if (status.wait_time == undefined) {
               console.log("No wait time");
               clearInterval(interval);
@@ -311,9 +313,11 @@ async function sendResults(
   id: string,
   userId
 ) {
-  var imagesArr = images.map((g, i) => {
+  var imagesArr = images.map(async (g, i) => {
     const sfbuff = Buffer.from(g.img, "base64");
-    return new AttachmentBuilder(sfbuff, { name: "output.png" });
+    var img = await sharp(sfbuff).toFormat("png").toBuffer();
+
+    return new AttachmentBuilder(img, { name: "output.png" });
   });
   const { data, error } = await supabase.from("results").insert([
     {
@@ -324,71 +328,54 @@ async function sendResults(
       uses: 1,
     },
   ]);
-
-  const row = new ActionRowBuilder();
-
-  var menu = new StringSelectMenuBuilder()
-    .setCustomId(`rate_${id}_${images[0].id}_${userId}`)
-    .setMinValues(1)
-    .setMaxValues(1)
-    .setOptions(
+  var embed = new EmbedBuilder()
+    .setColor("#347d9c")
+    .setTimestamp()
+    .setImage(`attachment://output.png`)
+    .setFields(
       {
-        value: "1",
-        label: "1/10",
+        name: "Prompt",
+        value: prompt,
+        inline: false,
       },
       {
-        value: "2",
-        label: "2/10",
+        name: "Steps",
+        value: `${steps}`,
+        inline: true,
       },
       {
-        value: "3",
-        label: "3/10",
-      },
-      {
-        value: "4",
-        label: "4/10",
-      },
-      {
-        value: "5",
-        label: "5/10",
-      },
-      {
-        value: "6",
-        label: "6/10",
-      },
-      {
-        value: "7",
-        label: "7/10",
-      },
-      {
-        value: "8",
-        label: "8/10",
-      },
-      {
-        value: "9",
-        label: "9/10",
-      },
-      {
-        value: "10",
-        label: "10/10",
+        name: "Model",
+        value: `${m}`,
+        inline: true,
       }
-    )
-    .setPlaceholder(`Rate the result(${1}) with a number from 1 to 10`);
-  row.addComponents(menu);
-  var reply = await interaction.editReply({
-    files: [imagesArr[0]],
-    components: [row],
-    content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
+    );
+
+  var row = await generateRateRow(id, userId, images[0].id);
+  if (imagesArr.length > 1) {
+    row = await generateUpscaleRow(id, images);
+  }
+  var imgs = images.map((g, i) => {
+    const sfbuff = Buffer.from(g.img, "base64");
+    return sfbuff;
   });
 
-  console.log(imagesArr.length);
+  let base64: any = await mergeBase64(imgs);
+  base64 = base64.split("base64,")[1];
+  var sfbuff = Buffer.from(base64, "base64");
+  var resfile = new AttachmentBuilder(sfbuff, { name: "output.png" });
+  var resfiles = [resfile];
+
+  var reply = await interaction.editReply({
+    files: resfiles,
+    components: [row],
+    content: `${interaction.user}`,
+    embeds: [embed],
+  });
+  /*
   if (imagesArr.length > 1) {
-    console.log("for");
-    for (var j = 1; j < imagesArr; j++) {
+    for (var j = 1; j < imagesArr.length; j++) {
       const row2 = new ActionRowBuilder();
-      console.log(j);
       var img = imagesArr[j];
-      console.log("reply", j);
       var menu2 = new StringSelectMenuBuilder()
         .setCustomId(`rate_${id}_${images[j].id}_${userId}`)
         .setMinValues(1)
@@ -437,11 +424,39 @@ async function sendResults(
         )
         .setPlaceholder(`Rate the result(${j + 1}) with a number from 1 to 10`);
       row2.addComponents(menu2);
-      await interaction.channel.send({
+      reply = await reply.reply({
         files: [img],
         components: [row2],
-        content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
       });
     }
+  }*/
+}
+async function generateUpscaleRow(generationId, images) {
+  const row = new ActionRowBuilder();
+  for (var i = 0; i < images.length; i++) {
+    var btn1 = new ButtonBuilder() //1
+      .setCustomId(`u_${generationId}_${images[i].id}`)
+      .setStyle(ButtonStyle.Secondary)
+      .setLabel(`U${i + 1}`);
+    row.addComponents(btn1);
   }
+  return row;
+}
+
+async function mergeBase64(imgs: string[]) {
+  const canvas = createCanvas(512 * imgs.length, 512);
+  const ctx = canvas.getContext("2d");
+  for (var i = 0; i < imgs.length; i++) {
+    var im = await sharp(imgs[i]).toFormat("png").toBuffer();
+    var b64 = Buffer.from(im).toString("base64");
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, i * 512, 0);
+    img.onerror = (err) => {
+      throw err;
+    };
+    img.src = `data:image/png;base64,${b64}`;
+  }
+
+  const dataURL = canvas.toDataURL();
+  return dataURL;
 }

@@ -15,11 +15,13 @@ export default {
     var arg;
     var arg2;
     var arg3;
+    var arg4;
     if (interaction.customId.includes("_")) {
       id = interaction.customId.split("_")[0];
       arg = interaction.customId.split("_")[1];
       arg2 = interaction.customId.split("_")[2];
       arg3 = interaction.customId.split("_")[3];
+      arg4 = interaction.customId.split("_")[4];
     }
     const interact = interaction.client.interactions.get(id);
 
@@ -31,7 +33,7 @@ export default {
     }
 
     try {
-      await interact.execute(interaction, client, arg, arg2, arg3);
+      await interact.execute(interaction, client, arg, arg2, arg3, arg4);
     } catch (error) {
       console.error(error);
       await interaction.reply({
