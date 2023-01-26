@@ -6,6 +6,14 @@ const stable_horde = new StableHorde({
   },
   default_token: process.env.STABLE_HORDE,
 });
+import { Configuration, OpenAIApi } from "openai";
+import "dotenv/config";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
 export default stable_horde;
 export async function getModels() {
   var models = await stable_horde.getModels();
@@ -82,8 +90,13 @@ async function filter(prompt, model) {
   var isYoung = false;
   if (nsfwModels.find((x) => x == model)) isNsfw = true;
   if (nsfwWords.some((v) => prompt.includes(v))) isNsfw = true;
-  console.log(youngWords.some((v) => prompt.includes(v)));
   if (youngWords.some((v) => prompt.includes(v))) isYoung = true;
+  if (!isYoung) {
+    var result = await openai.createModeration({
+      input: prompt,
+    });
+    isYoung = result.data.results[0].categories["sexual/minors"];
+  }
   if (isYoung && isNsfw) return false;
   return true;
 }
