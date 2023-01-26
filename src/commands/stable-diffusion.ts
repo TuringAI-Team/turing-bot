@@ -311,7 +311,7 @@ async function sendResults(
   ]);
 
   const row = new ActionRowBuilder();
-  for (var i = 0; i < images.length; i++) {
+  for (var i = 0; i < 1; i++) {
     var menu = new StringSelectMenuBuilder()
       .setCustomId(`rate_${id}_${images[i].id}_${userId}`)
       .setMinValues(1)
