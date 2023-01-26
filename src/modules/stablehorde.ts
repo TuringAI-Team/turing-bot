@@ -84,14 +84,15 @@ async function filter(prompt, model) {
     "baby",
     "prepubescent",
     "minor-aged",
+    "jenna ortega",
   ];
   var nsfwModels = ["Hentai Diffusion", "waifu_diffusion"];
   var nsfwWords = ["naked", "nude", "uncensored"];
   var isNsfw = false;
   var isYoung = false;
   if (nsfwModels.find((x) => x == model)) isNsfw = true;
-  if (nsfwWords.some((v) => prompt.includes(v))) isNsfw = true;
-  if (youngWords.some((v) => prompt.includes(v))) isYoung = true;
+  if (nsfwWords.some((v) => prompt.toLowerCase().includes(v))) isNsfw = true;
+  if (youngWords.some((v) => prompt.toLowerCase().includes(v))) isYoung = true;
   if (!isYoung) {
     var result = await openai.createModeration({
       input: prompt,
