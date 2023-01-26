@@ -58,7 +58,6 @@ async function filter(prompt, model) {
     "lolis",
     "children",
     "child",
-    "girl",
     "boy",
     "baby",
     "young",
@@ -85,6 +84,7 @@ async function filter(prompt, model) {
     "prepubescent",
     "minor-aged",
     "jenna ortega",
+    "hermione",
   ];
   var nsfwModels = ["Hentai Diffusion", "waifu_diffusion"];
   var nsfwWords = ["naked", "nude", "uncensored"];
