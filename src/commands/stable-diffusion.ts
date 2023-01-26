@@ -111,7 +111,7 @@ export default {
         .setDescription("The negative prompt you want to use.")
         .setRequired(false)
     ),
-  async execute(interaction) {
+  async execute(interaction, client) {
     var tags = [];
     if (
       interaction.channel.id != "1049275551568896000" &&
@@ -219,6 +219,20 @@ export default {
     try {
       var generation = await generateImg(prompt, m, steps, number, nsfw);
       if (generation.message) {
+        if (
+          generation.message.includes(
+            "This prompt appears to violate our terms of service and will be reported"
+          )
+        ) {
+          const channel = client.channels.cache.get("1051425293715390484");
+          await interaction.reply({
+            content: `Sending...`,
+            ephemeral: true,
+          });
+          channel.send(
+            `**Wrong prompt from __${interaction.user.tag}__** (${interaction.user.id})\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}`
+          );
+        }
         await interaction.editReply({
           content: `Something wrong happen:\n${generation.message}`,
           ephemeral: true,
@@ -311,59 +325,122 @@ async function sendResults(
   ]);
 
   const row = new ActionRowBuilder();
-  for (var i = 0; i < 1; i++) {
-    var menu = new StringSelectMenuBuilder()
-      .setCustomId(`rate_${id}_${images[i].id}_${userId}`)
-      .setMinValues(1)
-      .setMaxValues(1)
-      .setOptions(
-        {
-          value: "1",
-          label: "1/10",
-        },
-        {
-          value: "2",
-          label: "2/10",
-        },
-        {
-          value: "3",
-          label: "3/10",
-        },
-        {
-          value: "4",
-          label: "4/10",
-        },
-        {
-          value: "5",
-          label: "5/10",
-        },
-        {
-          value: "6",
-          label: "6/10",
-        },
-        {
-          value: "7",
-          label: "7/10",
-        },
-        {
-          value: "8",
-          label: "8/10",
-        },
-        {
-          value: "9",
-          label: "9/10",
-        },
-        {
-          value: "10",
-          label: "10/10",
-        }
-      )
-      .setPlaceholder(`Rate the result(${i + 1}) with a number from 1 to 10`);
-    row.addComponents(menu);
-  }
-  await interaction.editReply({
-    files: imagesArr,
+
+  var menu = new StringSelectMenuBuilder()
+    .setCustomId(`rate_${id}_${images[0].id}_${userId}`)
+    .setMinValues(1)
+    .setMaxValues(1)
+    .setOptions(
+      {
+        value: "1",
+        label: "1/10",
+      },
+      {
+        value: "2",
+        label: "2/10",
+      },
+      {
+        value: "3",
+        label: "3/10",
+      },
+      {
+        value: "4",
+        label: "4/10",
+      },
+      {
+        value: "5",
+        label: "5/10",
+      },
+      {
+        value: "6",
+        label: "6/10",
+      },
+      {
+        value: "7",
+        label: "7/10",
+      },
+      {
+        value: "8",
+        label: "8/10",
+      },
+      {
+        value: "9",
+        label: "9/10",
+      },
+      {
+        value: "10",
+        label: "10/10",
+      }
+    )
+    .setPlaceholder(`Rate the result(${1}) with a number from 1 to 10`);
+  row.addComponents(menu);
+  var reply = await interaction.editReply({
+    files: [imagesArr[0]],
     components: [row],
     content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
   });
+
+  console.log(imagesArr.length);
+  if (imagesArr.length > 1) {
+    console.log("for");
+    for (var j = 1; j < imagesArr; j++) {
+      const row2 = new ActionRowBuilder();
+      console.log(j);
+      var img = imagesArr[j];
+      console.log("reply", j);
+      var menu2 = new StringSelectMenuBuilder()
+        .setCustomId(`rate_${id}_${images[j].id}_${userId}`)
+        .setMinValues(1)
+        .setMaxValues(1)
+        .setOptions(
+          {
+            value: "1",
+            label: "1/10",
+          },
+          {
+            value: "2",
+            label: "2/10",
+          },
+          {
+            value: "3",
+            label: "3/10",
+          },
+          {
+            value: "4",
+            label: "4/10",
+          },
+          {
+            value: "5",
+            label: "5/10",
+          },
+          {
+            value: "6",
+            label: "6/10",
+          },
+          {
+            value: "7",
+            label: "7/10",
+          },
+          {
+            value: "8",
+            label: "8/10",
+          },
+          {
+            value: "9",
+            label: "9/10",
+          },
+          {
+            value: "10",
+            label: "10/10",
+          }
+        )
+        .setPlaceholder(`Rate the result(${j + 1}) with a number from 1 to 10`);
+      row2.addComponents(menu2);
+      await interaction.channel.send({
+        files: [img],
+        components: [row2],
+        content: `${interaction.user} **Prompt:** ${prompt} - ${steps}`,
+      });
+    }
+  }
 }

@@ -28,7 +28,6 @@ export async function generateImg(
   nsfw: boolean
 ) {
   var passFilter = await filter(prompt, model);
-  console.log(passFilter);
   if (!passFilter) {
     return {
       message:
@@ -97,7 +96,6 @@ async function filter(prompt, model) {
     var result = await openai.createModeration({
       input: prompt,
     });
-    console.log(result.data.results[0]);
     isYoung = result.data.results[0].categories["sexual/minors"];
   }
   if (isYoung && isNsfw) return false;
