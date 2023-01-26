@@ -28,6 +28,7 @@ export async function generateImg(
   nsfw: boolean
 ) {
   var passFilter = await filter(prompt, model);
+  console.log(passFilter);
   if (!passFilter) {
     return {
       message:
