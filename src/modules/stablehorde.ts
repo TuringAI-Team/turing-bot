@@ -34,6 +34,7 @@ export async function generateImg(
         "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
     };
   }
+
   const generation = await stable_horde.postAsyncGenerate({
     prompt: prompt,
     nsfw: nsfw,
@@ -46,7 +47,7 @@ export async function generateImg(
       steps: steps,
     },
   });
-
+  console.log(generation);
   return generation;
 }
 
