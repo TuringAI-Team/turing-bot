@@ -4,6 +4,9 @@ import "dotenv/config";
 import eventHandler from "./handlers/events.js";
 import commandHandler from "./handlers/commands.js";
 import interactionsHandler from "./handlers/interactions.js";
+import { REST, Routes } from "discord.js";
+const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+
 const client: any = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 client.interactions = new Collection();
@@ -12,5 +15,6 @@ client.interactions = new Collection();
 eventHandler(client);
 commandHandler(client);
 interactionsHandler(client);
+rest.on("rateLimited", console.log);
 
 client.login(process.env.TOKEN);
