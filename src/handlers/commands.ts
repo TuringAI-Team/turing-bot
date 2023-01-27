@@ -17,7 +17,6 @@ export default async function commandHandler(client) {
 
   for (const file of commandFiles) {
     const filePath = `../commands/${file}`;
-    console.log(filePath);
     const { default: command } = await import(filePath);
     // Set a new item in the Collection with the key as the command name and the value as the exported module
     if ("data" in command && "execute" in command) {
