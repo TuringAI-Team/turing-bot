@@ -46,12 +46,13 @@ export default {
         rated: true,
       })
       .eq("id", generationId);
-    await interaction.update({
-      components: [],
-    });
-    await interaction.reply({
-      content: `${interaction.user} image rated(${rate}/10) successfully.`,
-      ephemeral: true,
-    });
+    try {
+      await interaction.update({
+        content: `${interaction.user} image rated(${rate}/10) successfully.`,
+        ephemeral: true,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   },
 };

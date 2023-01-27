@@ -14,7 +14,6 @@ export default {
   },
   async execute(interaction, client, generationId, imageId) {
     await interaction.deferReply();
-    console.log(generationId);
     var { data, error } = await supabase
       .from("results")
       .select("*")

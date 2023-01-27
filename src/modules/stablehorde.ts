@@ -5,8 +5,11 @@ const stable_horde = new StableHorde({
   cache: {
     generations_check: 1000 * 30,
   },
+  client_agent:
+    "!Mrlol#0333-Turing-AI-Discord-bot:https://github.com/MrlolDev/turing-bot",
   default_token: process.env.STABLE_HORDE,
 });
+import sharp from "sharp";
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
 
@@ -50,6 +53,47 @@ export async function generateImg(
   });
   console.log(generation);
   return generation;
+}
+export async function generateImg2img(
+  prompt: string,
+  model: string,
+  steps: number,
+  amount: number,
+  nsfw: boolean,
+  source_image: string,
+  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes]
+) {
+  var passFilter = await filter(prompt, model);
+  if (!passFilter) {
+    return {
+      message:
+        "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
+    };
+  }
+
+  const generation = await stable_horde.postAsyncGenerate({
+    prompt: prompt,
+    nsfw: nsfw,
+    censor_nsfw: nsfw == true ? false : true,
+    r2: false,
+    shared: true,
+    models: [model],
+    source_image,
+    source_processing,
+    params: {
+      n: amount,
+      steps: steps,
+    },
+  });
+  console.log(generation);
+  return generation;
+}
+
+export async function png2webp(png) {
+  const sfbuff = Buffer.from(png, "base64");
+  var img = await sharp(sfbuff).toFormat("png").toBuffer();
+  var b64 = Buffer.from(img).toString("base64");
+  return b64;
 }
 
 async function filter(prompt, model) {
@@ -150,3 +194,121 @@ export async function generateRateRow(generationId, userId, imageId) {
   row.addComponents(btn5);
   return [row];
 }
+
+export var models = [
+  {
+    name: "Stable diffusion v2.1",
+    value: "stable_diffusion_2.1",
+    tags: null,
+  },
+  {
+    name: "Stable diffusion v2.0",
+    value: "stable_diffusion_2.0",
+    tags: null,
+  },
+  {
+    name: "Stable diffusion",
+    value: "stable_diffusion",
+    tags: null,
+  },
+  {
+    name: "Microworlds",
+    value: "Microworlds",
+    tags: ["microworld render style"],
+  },
+  { name: "Anything Diffusion", value: "Anything Diffusion" },
+  {
+    name: "Midjourney Diffusion",
+    value: "Midjourney Diffusion",
+    tags: ["mdjrny-v4 style"],
+  },
+  { name: "Dreamshaper", value: "Dreamshaper", tags: null },
+  {
+    name: "Dreamlike Photoreal",
+    value: "Dreamlike Photoreal",
+    tags: null,
+  },
+  {
+    name: "Dreamlike Diffusion",
+    value: "Dreamlike Diffusion",
+    tags: ["dreamlikeart"],
+  },
+  {
+    name: "ProtoGen",
+    value: "ProtoGen",
+    tags: null,
+  },
+  {
+    name: "Hentai Diffusion",
+    value: "Hentai Diffusion",
+    tags: ["1girl", "anime"],
+  },
+  {
+    name: "Waifu Diffusion",
+    value: "waifu_diffusion",
+    tags: null,
+  },
+  {
+    name: "Synthwave",
+    value: "Synthwave",
+    tags: ["snthwve", "style"],
+  },
+  {
+    name: "Redshift Diffusion",
+    value: "Redshift Diffusion",
+    tags: ["redshift style"],
+  },
+  {
+    name: "Yiffy",
+    value: "Yiffy",
+    tags: null,
+  },
+  {
+    name: "Zack3D",
+    value: "Zack3D",
+    tags: null,
+  },
+  {
+    name: "Protogen Infinity",
+    value: "Protogen Infinity",
+    tags: null,
+  },
+];
+
+export var types = [
+  {
+    name: "realistic",
+    tags: [
+      "((realistic))",
+      "((RTX))",
+      "highres",
+      "extreme detail",
+      "((photograph))",
+      "((photorealistic))",
+    ],
+  },
+  {
+    name: "wallpaper",
+    tags: ["((background))", "((wallpaper))", "colorful", "highres"],
+  },
+  {
+    name: "drawn",
+    tags: ["((drawing))"],
+  },
+  {
+    name: "pastel",
+    tags: ["((drawing))", "((pastel style))", "((pastel colors))"],
+  },
+  {
+    name: "watercolor",
+    tags: ["((drawing))", "((watercolor style))", "((watercolor))"],
+  },
+  {
+    name: "anime",
+    tags: ["((anime))", "((anime style))"],
+  },
+  {
+    name: "surreal",
+    tags: ["((impossible))", "((strange))", "((wonky))", "((surreal))"],
+  },
+];

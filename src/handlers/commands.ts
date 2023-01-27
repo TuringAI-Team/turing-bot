@@ -44,7 +44,6 @@ export default async function commandHandler(client) {
         Routes.applicationCommands(process.env.CLIENT_ID),
         { body: commands }
       );
-      console.log(data);
 
       console.log(`Successfully reloaded application (/) commands.`);
     } catch (error) {
