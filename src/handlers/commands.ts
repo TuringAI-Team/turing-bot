@@ -32,7 +32,7 @@ export default async function commandHandler(client) {
   }
 
   // Construct and prepare an instance of the REST module
-
+  rest.on("rateLimited", console.log);
   // and deploy your commands!
   /*
   (async () => {
