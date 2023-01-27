@@ -18,7 +18,7 @@ import {
 import { isPremium } from "../modules/premium.js";
 import { createCanvas, loadImage, Image } from "canvas";
 import sharp from "sharp";
-import { generateRateRow } from "../modules/stablehorde.js";
+import { generateRateRow, generateUpscaleRow } from "../modules/stablehorde.js";
 
 export default {
   cooldown: "2m",
@@ -367,7 +367,7 @@ async function sendResults(
 
   var reply = await interaction.editReply({
     files: resfiles,
-    components: [row],
+    components: row,
     content: `${interaction.user}`,
     embeds: [embed],
   });
@@ -430,17 +430,6 @@ async function sendResults(
       });
     }
   }*/
-}
-async function generateUpscaleRow(generationId, images) {
-  const row = new ActionRowBuilder();
-  for (var i = 0; i < images.length; i++) {
-    var btn1 = new ButtonBuilder() //1
-      .setCustomId(`u_${generationId}_${images[i].id}`)
-      .setStyle(ButtonStyle.Secondary)
-      .setLabel(`U${i + 1}`);
-    row.addComponents(btn1);
-  }
-  return row;
 }
 
 async function mergeBase64(imgs: string[]) {

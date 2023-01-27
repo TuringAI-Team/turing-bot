@@ -48,7 +48,7 @@ export default {
 
     await interaction.editReply({
       embeds: [embed],
-      components: [row],
+      components: row,
       files: [attch],
       content: `${interaction.user}`,
     });

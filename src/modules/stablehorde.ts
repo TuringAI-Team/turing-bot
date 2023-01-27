@@ -109,7 +109,17 @@ export async function checkGeneration(generation: any) {
   const check = await stable_horde.getGenerationStatus(generation.id);
   return check;
 }
-
+export async function generateUpscaleRow(generationId, images) {
+  const row = new ActionRowBuilder();
+  for (var i = 0; i < images.length; i++) {
+    var btn1 = new ButtonBuilder() //1
+      .setCustomId(`u_${generationId}_${images[i].id}`)
+      .setStyle(ButtonStyle.Secondary)
+      .setLabel(`U${i + 1}`);
+    row.addComponents(btn1);
+  }
+  return [row];
+}
 export async function generateRateRow(generationId, userId, imageId) {
   const row = new ActionRowBuilder();
   const btn1 = new ButtonBuilder() //1
@@ -138,5 +148,5 @@ export async function generateRateRow(generationId, userId, imageId) {
     .setStyle(ButtonStyle.Secondary)
     .setLabel("😍️️️️️️");
   row.addComponents(btn5);
-  return row;
+  return [row];
 }
