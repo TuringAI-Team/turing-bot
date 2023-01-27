@@ -40,12 +40,13 @@ export default async function commandHandler(client) {
       console.log(
         `Started refreshing ${commands.length} application (/) commands.`
       );
-
+      console.log(commands);
       // The put method is used to fully refresh all commands in the guild with the current set
       const data = await rest.put(
         Routes.applicationCommands(process.env.CLIENT_ID),
         { body: commands }
       );
+      console.log(data);
 
       console.log(`Successfully reloaded application (/) commands.`);
     } catch (error) {
