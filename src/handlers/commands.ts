@@ -33,7 +33,7 @@ export default async function commandHandler(client) {
 
   // Construct and prepare an instance of the REST module
   // and deploy your commands!
-  /*
+
   (async () => {
     try {
       console.log(
@@ -51,5 +51,5 @@ export default async function commandHandler(client) {
       // And of course, make sure you catch and log any errors!
       console.log(error);
     }
-  })();*/
+  })();
 }
