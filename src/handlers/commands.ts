@@ -50,7 +50,7 @@ export default async function commandHandler(client) {
       console.log(`Successfully reloaded application (/) commands.`);
     } catch (error) {
       // And of course, make sure you catch and log any errors!
-      console.error(error);
+      console.log(error);
     }
   })();
 }
