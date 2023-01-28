@@ -89,6 +89,7 @@ export async function generateImg2img(
   console.log(generation);
   return generation;
 }
+
 export async function generateInpaiting(
   prompt: string,
   steps: number,
@@ -104,7 +105,7 @@ export async function generateInpaiting(
         "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
     };
   }
-
+  var source_mask = await generateMasks(source_image);
   const generation = await stable_horde.postAsyncGenerate({
     prompt: prompt,
     nsfw: nsfw,
@@ -113,6 +114,7 @@ export async function generateInpaiting(
     shared: true,
     source_image,
     source_processing,
+    source_mask,
     params: {
       n: amount,
       steps: steps,
@@ -131,6 +133,20 @@ export async function png2webp(pngUrl) {
   const webpBase64 = webpBuffer.toString("base64");
 
   return webpBase64;
+}
+
+export async function generateMasks(webp) {
+  const buffer = Buffer.from(webp, "base64");
+  var data = await sharp(buffer)
+    .threshold(128)
+    .toFormat("webp")
+    .toBuffer()
+
+    .catch((err) => {
+      console.log(err);
+    });
+  const result = data.toString("base64");
+  return result;
 }
 
 async function filter(prompt, model?) {
