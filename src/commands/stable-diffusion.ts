@@ -23,6 +23,7 @@ import { isPremium } from "../modules/premium.js";
 import { createCanvas, loadImage, Image } from "canvas";
 import sharp from "sharp";
 import { generateRateRow, generateUpscaleRow } from "../modules/stablehorde.js";
+import StableHorde from "@zeldafan0225/stable_horde";
 
 var data = new SlashCommandBuilder()
   .setName("stable-diffusion")
@@ -445,7 +446,7 @@ export default {
           4,
           nsfw,
           image,
-          "img2img"
+          StableHorde.SourceImageProcessingTypes.img2img
         );
       } else if (interaction.options.getSubcommand() === "inpainting") {
         generation.message = "Function not supported yet";
