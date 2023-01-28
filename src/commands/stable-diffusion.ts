@@ -19,6 +19,7 @@ import {
   types,
   generateInpaiting,
   png2webp,
+  generateMasks,
 } from "../modules/stablehorde.js";
 import { isPremium } from "../modules/premium.js";
 import { createCanvas, loadImage, Image } from "canvas";
@@ -376,13 +377,18 @@ export default {
           StableHorde.SourceImageProcessingTypes.img2img
         );
       } else if (interaction.options.getSubcommand() === "inpainting") {
+        const attachment = interaction.options.getAttachment("sourceimage");
+        var image = await png2webp(attachment.url);
+        var source_mask = await generateMasks(image);
+
         generation = await generateInpaiting(
           prompt,
           steps,
           1,
           nsfw,
           image,
-          StableHorde.SourceImageProcessingTypes.inpainting
+          StableHorde.SourceImageProcessingTypes.inpainting,
+          source_mask
         );
       }
 

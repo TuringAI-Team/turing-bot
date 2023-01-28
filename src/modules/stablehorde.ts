@@ -96,7 +96,8 @@ export async function generateInpaiting(
   amount: number,
   nsfw: boolean,
   source_image: string,
-  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes]
+  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes],
+  source_mask
 ) {
   var passFilter = await filter(prompt);
   if (!passFilter) {
@@ -105,7 +106,6 @@ export async function generateInpaiting(
         "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
     };
   }
-  var source_mask = await generateMasks(source_image);
   const generation = await stable_horde.postAsyncGenerate({
     prompt: prompt,
     nsfw: nsfw,
@@ -141,7 +141,6 @@ export async function generateMasks(webp) {
     .threshold(128)
     .toFormat("webp")
     .toBuffer()
-
     .catch((err) => {
       console.log(err);
     });
