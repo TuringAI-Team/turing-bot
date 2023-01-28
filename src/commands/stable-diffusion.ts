@@ -449,7 +449,34 @@ export default {
           StableHorde.SourceImageProcessingTypes.img2img
         );
       } else if (interaction.options.getSubcommand() === "inpainting") {
-        generation.message = "Function not supported yet";
+        var processing = interaction.options.getString("processing");
+        if (processing == "inpainting") {
+          generation = await generateImg2img(
+            prompt,
+            m,
+            steps,
+            4,
+            nsfw,
+            image,
+            StableHorde.SourceImageProcessingTypes.inpainting
+          );
+        } else if (processing == "outpainting") {
+          generation = await generateImg2img(
+            prompt,
+            m,
+            steps,
+            4,
+            nsfw,
+            image,
+            StableHorde.SourceImageProcessingTypes.outpainting
+          );
+        } else {
+          await interaction.editReply({
+            content: `Something went wrong`,
+            ephemeral: true,
+          });
+          return;
+        }
       }
 
       var interval = setInterval(async () => {
