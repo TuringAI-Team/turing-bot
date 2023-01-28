@@ -437,11 +437,8 @@ export default {
         }
       } else if (interaction.options.getSubcommand() === "img2img") {
         const attachment = interaction.options.getAttachment("sourceimage");
-        console.log(attachment.url);
         var image = await png2webp(attachment.url);
-        console.log(image);
-        generation.message = "Function not supported yet";
-        /* generation = await generateImg2img(
+        generation = await generateImg2img(
           prompt,
           m,
           steps,
@@ -449,7 +446,7 @@ export default {
           nsfw,
           image,
           "img2img"
-        );*/
+        );
       } else if (interaction.options.getSubcommand() === "inpainting") {
         generation.message = "Function not supported yet";
       }
