@@ -117,6 +117,7 @@ export async function generateInpaiting(
       n: amount,
       steps: steps,
     },
+    trusted_workers: true,
   });
   console.log(generation);
   return generation;
