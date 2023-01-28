@@ -370,7 +370,7 @@ export default {
           prompt,
           m,
           steps,
-          4,
+          2,
           nsfw,
           image,
           StableHorde.SourceImageProcessingTypes.img2img
@@ -379,7 +379,7 @@ export default {
         generation = await generateInpaiting(
           prompt,
           steps,
-          4,
+          1,
           nsfw,
           image,
           StableHorde.SourceImageProcessingTypes.inpainting
@@ -580,7 +580,17 @@ async function sendResults(
 }
 
 async function mergeBase64(imgs: string[]) {
-  const canvas = createCanvas(512, 512);
+  var totalW = 512;
+  var totalH = 512;
+  if (imgs.length == 1) {
+    totalW = 256;
+    totalH = 256;
+  }
+  if (imgs.length == 2) {
+    totalW = 512;
+    totalH = 256;
+  }
+  const canvas = createCanvas(totalW, totalH);
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
