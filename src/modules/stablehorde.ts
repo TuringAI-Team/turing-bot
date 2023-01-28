@@ -97,7 +97,7 @@ export async function generateInpaiting(
   source_image: string,
   source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes]
 ) {
-  var passFilter = await filter(prompt, model);
+  var passFilter = await filter(prompt);
   if (!passFilter) {
     return {
       message:
@@ -111,7 +111,6 @@ export async function generateInpaiting(
     censor_nsfw: nsfw == true ? false : true,
     r2: false,
     shared: true,
-    models: [model],
     source_image,
     source_processing,
     params: {
@@ -133,7 +132,7 @@ export async function png2webp(pngUrl) {
   return webpBase64;
 }
 
-async function filter(prompt, model) {
+async function filter(prompt, model?) {
   var youngWords = [
     "kid",
     "kids",
