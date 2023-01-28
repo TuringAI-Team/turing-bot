@@ -123,6 +123,12 @@ var data = new SlashCommandBuilder()
             { name: "surreal", value: "surreal" }
           )
       )
+      .addStringOption((option) =>
+        option
+          .setName("negprompt")
+          .setDescription("The negative prompt you want to use.")
+          .setRequired(false)
+      )
   )
   .addSubcommand((subcommand) =>
     subcommand
@@ -225,6 +231,12 @@ var data = new SlashCommandBuilder()
             { name: "watercolor", value: "watercolor" },
             { name: "surreal", value: "surreal" }
           )
+      )
+      .addStringOption((option) =>
+        option
+          .setName("negprompt")
+          .setDescription("The negative prompt you want to use.")
+          .setRequired(false)
       )
   )
   .addSubcommand((subcommand) =>
@@ -339,17 +351,18 @@ var data = new SlashCommandBuilder()
             { name: "surreal", value: "surreal" }
           )
       )
+      .addStringOption((option) =>
+        option
+          .setName("negprompt")
+          .setDescription("The negative prompt you want to use.")
+          .setRequired(false)
+      )
   );
 export default {
   cooldown: "2m",
   data,
   /*
-    .addStringOption((option) =>
-      option
-        .setName("negprompt")
-        .setDescription("The negative prompt you want to use.")
-        .setRequired(false)
-    )*/
+   */
   async execute(interaction, client) {
     var tags = [];
     if (
@@ -394,11 +407,13 @@ export default {
     await interaction.deferReply();
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
     var nsfw = false;
+    var FullnegPrompt = `${negPrompt}, ${defaultNegPrompt}`;
+    var fullPrompt = `${prompt} ### ${negPrompt}`;
     if (interaction.channel && interaction.channel.nsfw) nsfw = true;
     try {
       var generation;
       if (interaction.options.getSubcommand() === "text2img") {
-        generation = await generateImg(prompt, m, steps, 4, nsfw);
+        generation = await generateImg(fullPrompt, m, steps, 4, nsfw);
         if (generation.message) {
           if (
             generation.message.includes(
@@ -444,17 +459,20 @@ export default {
             clearInterval(interval);
             const { data, error } = await supabase.from("results").insert([
               {
-                prompt: prompt,
+                id: generation.id,
+                prompt: fullPrompt,
                 provider: m,
                 result: status.generations,
                 uses: 1,
               },
             ]);
+
             await sendResults(
               status.generations,
               interaction,
               m,
               prompt,
+              FullnegPrompt,
               steps,
               generation.id,
               interaction.user.id
@@ -505,6 +523,7 @@ async function sendResults(
   interaction,
   m,
   prompt,
+  negPrompt: string,
   steps,
   id: string,
   userId
@@ -515,15 +534,7 @@ async function sendResults(
 
     return new AttachmentBuilder(img, { name: "output.png" });
   });
-  const { data, error } = await supabase.from("results").insert([
-    {
-      id: id,
-      prompt: prompt,
-      provider: m,
-      result: images,
-      uses: 1,
-    },
-  ]);
+
   var embed = new EmbedBuilder()
     .setColor("#347d9c")
     .setTimestamp()
@@ -532,6 +543,11 @@ async function sendResults(
       {
         name: "Prompt",
         value: prompt,
+        inline: false,
+      },
+      {
+        name: "Neg prompt",
+        value: negPrompt,
         inline: false,
       },
       {
