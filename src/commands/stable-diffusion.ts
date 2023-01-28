@@ -259,16 +259,6 @@ var data = new SlashCommandBuilder()
       )
       .addStringOption((option) =>
         option
-          .setName("processing")
-          .setDescription("The process you want to use in the image")
-          .setRequired(true)
-          .addChoices(
-            { name: "inpainting", value: "inpainting" },
-            { name: "outpainting", value: "outpainting" }
-          )
-      )
-      .addStringOption((option) =>
-        option
           .setName("steps")
           .setDescription("The number of steps to generate the image")
           .setRequired(true)
@@ -386,37 +376,20 @@ export default {
           StableHorde.SourceImageProcessingTypes.img2img
         );
       } else if (interaction.options.getSubcommand() === "inpainting") {
-        var processing = interaction.options.getString("processing");
-        if (processing == "inpainting") {
-          generation = await generateInpaiting(
-            prompt,
-            steps,
-            4,
-            nsfw,
-            image,
-            StableHorde.SourceImageProcessingTypes.inpainting
-          );
-        } else if (processing == "outpainting") {
-          generation = await generateInpaiting(
-            prompt,
-            steps,
-            4,
-            nsfw,
-            image,
-            StableHorde.SourceImageProcessingTypes.outpainting
-          );
-        } else {
-          await interaction.editReply({
-            content: `Something went wrong`,
-            ephemeral: true,
-          });
-          return;
-        }
+        generation = await generateInpaiting(
+          prompt,
+          steps,
+          4,
+          nsfw,
+          image,
+          StableHorde.SourceImageProcessingTypes.inpainting
+        );
       }
 
       var interval = setInterval(async () => {
         try {
           var status = await checkGeneration(generation);
+          console.log(status);
           if (status.done) {
             clearInterval(interval);
             const { data, error } = await supabase.from("results").insert([
