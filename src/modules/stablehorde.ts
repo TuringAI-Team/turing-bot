@@ -12,6 +12,7 @@ const stable_horde = new StableHorde({
 import sharp from "sharp";
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
+import axios from "axios";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_KEY,
@@ -89,11 +90,15 @@ export async function generateImg2img(
   return generation;
 }
 
-export async function png2webp(png) {
-  const sfbuff = Buffer.from(png, "base64");
-  var img = await sharp(sfbuff).toFormat("png").toBuffer();
-  var b64 = Buffer.from(img).toString("base64");
-  return b64;
+export async function png2webp(pngUrl) {
+  const response = await axios.get(pngUrl, { responseType: "arraybuffer" });
+  const imageBuffer = Buffer.from(response.data, "binary");
+  const webpBuffer = await sharp(imageBuffer).toFormat("webp").toBuffer();
+
+  // Convert the WebP image buffer to a base64 string
+  const webpBase64 = webpBuffer.toString("base64");
+
+  return webpBase64;
 }
 
 async function filter(prompt, model) {
