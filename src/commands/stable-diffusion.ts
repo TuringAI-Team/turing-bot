@@ -17,6 +17,7 @@ import {
   generateImg2img,
   models,
   types,
+  generateInpaiting,
   png2webp,
 } from "../modules/stablehorde.js";
 import { isPremium } from "../modules/premium.js";
@@ -268,70 +269,6 @@ var data = new SlashCommandBuilder()
       )
       .addStringOption((option) =>
         option
-          .setName("model")
-          .setDescription("The stable diffusion model you want to use")
-          .setRequired(true)
-          .addChoices(
-            {
-              name: "Stable diffusion v2.1",
-              value: "stable_diffusion_2.1",
-            },
-            {
-              name: "Stable diffusion v2.0",
-              value: "stable_diffusion_2.0",
-            },
-            {
-              name: "Stable diffusion",
-              value: "stable_diffusion",
-            },
-            { name: "Microworlds", value: "Microworlds" },
-            { name: "Anything Diffusion", value: "Anything Diffusion" },
-            { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
-            { name: "Dreamshaper", value: "Dreamshaper" },
-            {
-              name: "Dreamlike Photoreal",
-              value: "Dreamlike Photoreal",
-            },
-            {
-              name: "Dreamlike Diffusion",
-              value: "Dreamlike Diffusion",
-            },
-            {
-              name: "ProtoGen",
-              value: "ProtoGen",
-            },
-            {
-              name: "Hentai Diffusion",
-              value: "Hentai Diffusion",
-            },
-            {
-              name: "Waifu Diffusion",
-              value: "waifu_diffusion",
-            },
-            {
-              name: "Synthwave",
-              value: "Synthwave",
-            },
-            {
-              name: "Redshift Diffusion",
-              value: "Redshift Diffusion",
-            },
-            {
-              name: "Yiffy",
-              value: "Yiffy",
-            },
-            {
-              name: "Zack3D",
-              value: "Zack3D",
-            },
-            {
-              name: "Protogen Infinity",
-              value: "Protogen Infinity",
-            }
-          )
-      )
-      .addStringOption((option) =>
-        option
           .setName("steps")
           .setDescription("The number of steps to generate the image")
           .setRequired(true)
@@ -451,9 +388,8 @@ export default {
       } else if (interaction.options.getSubcommand() === "inpainting") {
         var processing = interaction.options.getString("processing");
         if (processing == "inpainting") {
-          generation = await generateImg2img(
+          generation = await generateInpaiting(
             prompt,
-            m,
             steps,
             4,
             nsfw,
@@ -461,9 +397,8 @@ export default {
             StableHorde.SourceImageProcessingTypes.inpainting
           );
         } else if (processing == "outpainting") {
-          generation = await generateImg2img(
+          generation = await generateInpaiting(
             prompt,
-            m,
             steps,
             4,
             nsfw,

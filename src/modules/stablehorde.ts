@@ -89,7 +89,39 @@ export async function generateImg2img(
   console.log(generation);
   return generation;
 }
+export async function generateInpaiting(
+  prompt: string,
+  steps: number,
+  amount: number,
+  nsfw: boolean,
+  source_image: string,
+  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes]
+) {
+  var passFilter = await filter(prompt, model);
+  if (!passFilter) {
+    return {
+      message:
+        "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
+    };
+  }
 
+  const generation = await stable_horde.postAsyncGenerate({
+    prompt: prompt,
+    nsfw: nsfw,
+    censor_nsfw: nsfw == true ? false : true,
+    r2: false,
+    shared: true,
+    models: [model],
+    source_image,
+    source_processing,
+    params: {
+      n: amount,
+      steps: steps,
+    },
+  });
+  console.log(generation);
+  return generation;
+}
 export async function png2webp(pngUrl) {
   const response = await axios.get(pngUrl, { responseType: "arraybuffer" });
   const imageBuffer = Buffer.from(response.data, "binary");
