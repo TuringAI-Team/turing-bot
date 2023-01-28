@@ -240,7 +240,8 @@ var data = new SlashCommandBuilder()
           .setDescription("The negative prompt you want to use.")
           .setRequired(false)
       )
-  )
+  );
+/*
   .addSubcommand((subcommand) =>
     subcommand
       .setName("inpainting")
@@ -285,7 +286,7 @@ var data = new SlashCommandBuilder()
           .setDescription("The negative prompt you want to use.")
           .setRequired(false)
       )
-  );
+  );*/
 export default {
   cooldown: "2m",
   data,
