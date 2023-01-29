@@ -401,14 +401,8 @@ export default {
           source_mask
         );
       }
-      async function check(
-        generation,
-        fullPrompt,
-        m,
-        interaction,
-        FullnegPrompt,
-        steps
-      ) {
+
+      var interval = setInterval(async () => {
         try {
           var status = await checkGeneration(generation);
           if (status.done) {
@@ -434,7 +428,6 @@ export default {
               interaction.user.id
             );
           } else {
-            console.log(status);
             if (status.wait_time == undefined) {
               console.log("No wait time");
               clearInterval(interval);
@@ -445,20 +438,7 @@ export default {
             }
             try {
               var waittime = status.wait_time;
-
-              if (waittime < 15) {
-                clearInterval(interval);
-                interval = setInterval(async () => {
-                  await check(
-                    generation,
-                    fullPrompt,
-                    m,
-                    interaction,
-                    FullnegPrompt,
-                    steps
-                  );
-                }, 15000);
-              }
+              if (waittime < 15) waittime = 15;
               await interaction.editReply({
                 content: `Loading...(${waittime}s)`,
               });
@@ -479,16 +459,6 @@ export default {
             ephemeral: true,
           });
         }
-      }
-      var interval = setInterval(async () => {
-        await check(
-          generation,
-          fullPrompt,
-          m,
-          interaction,
-          FullnegPrompt,
-          steps
-        );
       }, 15000);
     } catch (e) {
       await interaction.editReply({
