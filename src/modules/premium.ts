@@ -1,5 +1,6 @@
 import supabase from "./supabase.js";
 import ms from "ms";
+import premium from "src/commands/premium.js";
 
 export async function isPremium(id: string) {
   let { data: premium, error } = await supabase
@@ -67,20 +68,19 @@ export async function makeItPremium(
     // Filters
     .eq("id", id);
   if (premium && premium[0]) {
-    await renew(id, method, duration);
+    await renew(id, method, duration, premium[0]);
   } else {
     await create(id, method, duration);
   }
 }
 
-async function renew(id: string, method: string, duration: string) {
-  console.log(duration);
+async function renew(id: string, method: string, duration: string, actual) {
   const { data, error } = await supabase
     .from("premium")
     .update({
       renewed_at: Date.now(),
       method: method,
-      expires_at: Date.now() + ms(duration),
+      expires_at: premium[0].expires_at + ms(duration),
     })
     .eq("id", id);
 }
