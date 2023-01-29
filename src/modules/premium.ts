@@ -35,7 +35,7 @@ export async function activateKey(key: string, id: string) {
   if (keyD && keyD[0]) {
     var duration = keyD[0].duration;
     if (duration == "1m") duration = "30d";
-    await makeItPremium(id, "key", duration);
+    var r = await makeItPremium(id, "key", duration);
     await supabase
       .from("keys")
       .update({
@@ -46,8 +46,9 @@ export async function activateKey(key: string, id: string) {
       })
       // Filters
       .eq("key", key);
+
     return {
-      message: "Premium activated successfully",
+      message: `Turing AI Premium ${r} successfully`,
     };
   } else {
     return {
@@ -69,8 +70,10 @@ export async function makeItPremium(
     .eq("id", id);
   if (premium && premium[0]) {
     await renew(id, method, duration, premium[0]);
+    return "renewed";
   } else {
     await create(id, method, duration);
+    return "activated";
   }
 }
 
