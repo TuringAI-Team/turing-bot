@@ -401,7 +401,77 @@ export default {
           source_mask
         );
       }
-      await check(generation, fullPrompt, m, interaction, FullnegPrompt, steps);
+      async function check(
+        generation,
+        interval,
+        fullPrompt,
+        m,
+        interaction,
+        FullnegPrompt,
+        steps
+      ) {
+        try {
+          var status = await checkGeneration(generation);
+          if (status.done) {
+            clearInterval(interval);
+            const { data, error } = await supabase.from("results").insert([
+              {
+                id: generation.id,
+                prompt: fullPrompt,
+                provider: m,
+                result: status.generations,
+                uses: 1,
+              },
+            ]);
+
+            await sendResults(
+              status.generations,
+              interaction,
+              m,
+              prompt,
+              FullnegPrompt,
+              steps,
+              generation.id,
+              interaction.user.id
+            );
+          } else {
+            if (status.wait_time == undefined) {
+              console.log("No wait time");
+              clearInterval(interval);
+              await interaction.editReply({
+                content: `Something wrong happen.`,
+                ephemeral: true,
+              });
+            }
+            try {
+              var waittime = status.wait_time;
+
+              if (waittime < 15) {
+                clearInterval(interval);
+                interval = setInterval(check, waittime * 1000 + 1000);
+              }
+              await interaction.editReply({
+                content: `Loading...(${waittime}s)`,
+              });
+            } catch (err) {
+              console.log(err);
+              clearInterval(interval);
+              await interaction.editReply({
+                content: `Something wrong happen.`,
+                ephemeral: true,
+              });
+            }
+          }
+        } catch (err) {
+          console.log(err);
+          clearInterval(interval);
+          await interaction.editReply({
+            content: `Something wrong happen.`,
+            ephemeral: true,
+          });
+        }
+      }
+      var interval = setInterval(check, 15000);
     } catch (e) {
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
@@ -411,69 +481,6 @@ export default {
   },
 };
 
-async function check(
-  generation,
-  fullPrompt,
-  m,
-  interaction,
-  FullnegPrompt,
-  steps
-) {
-  try {
-    var status = await checkGeneration(generation);
-    if (status.done) {
-      const { data, error } = await supabase.from("results").insert([
-        {
-          id: generation.id,
-          prompt: fullPrompt,
-          provider: m,
-          result: status.generations,
-          uses: 1,
-        },
-      ]);
-
-      await sendResults(
-        status.generations,
-        interaction,
-        m,
-        prompt,
-        FullnegPrompt,
-        steps,
-        generation.id,
-        interaction.user.id
-      );
-    } else {
-      if (status.wait_time == undefined) {
-        console.log("No wait time");
-        await interaction.editReply({
-          content: `Something wrong happen.`,
-          ephemeral: true,
-        });
-      }
-      try {
-        var waittime = status.wait_time;
-        setTimeout(check, waittime);
-
-        if (waittime < 15) waittime = 15;
-        await interaction.editReply({
-          content: `Loading...(${waittime}s)`,
-        });
-      } catch (err) {
-        console.log(err);
-        await interaction.editReply({
-          content: `Something wrong happen.`,
-          ephemeral: true,
-        });
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    await interaction.editReply({
-      content: `Something wrong happen.`,
-      ephemeral: true,
-    });
-  }
-}
 async function sendResults(
   images,
   interaction,
