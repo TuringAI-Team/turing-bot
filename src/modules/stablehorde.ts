@@ -5,8 +5,7 @@ const stable_horde = new StableHorde({
   cache: {
     generations_check: 1000 * 30,
   },
-  client_agent:
-    "!Mrlol#0333-Turing-AI-Discord-bot:https://github.com/MrlolDev/turing-bot",
+  client_agent: "Turing-AI-Discord-bot:1.0:(discord)Mrlol#0333",
   default_token: process.env.STABLE_HORDE,
 });
 import sharp from "sharp";
