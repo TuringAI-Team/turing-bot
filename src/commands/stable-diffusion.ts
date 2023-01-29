@@ -403,7 +403,6 @@ export default {
       }
       async function check(
         generation,
-        interval,
         fullPrompt,
         m,
         interaction,
@@ -448,7 +447,16 @@ export default {
 
               if (waittime < 15) {
                 clearInterval(interval);
-                interval = setInterval(check, waittime * 1000 + 1000);
+                interval = setInterval(async () => {
+                  await check(
+                    generation,
+                    fullPrompt,
+                    m,
+                    interaction,
+                    FullnegPrompt,
+                    steps
+                  );
+                }, 15000);
               }
               await interaction.editReply({
                 content: `Loading...(${waittime}s)`,
@@ -471,7 +479,16 @@ export default {
           });
         }
       }
-      var interval = setInterval(check, 15000);
+      var interval = setInterval(async () => {
+        await check(
+          generation,
+          fullPrompt,
+          m,
+          interaction,
+          FullnegPrompt,
+          steps
+        );
+      }, 15000);
     } catch (e) {
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
