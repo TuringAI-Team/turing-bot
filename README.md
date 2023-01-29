@@ -1,4 +1,4 @@
-# turing-bot
+# turing-bot [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U7U5H70V5)
 
 A discord bot for access different AIs
 
