@@ -42,7 +42,6 @@ export default {
         ephemeral: true,
       });
     } else {
-      await interaction.deferReply();
       if (!key) {
         await interaction.editReply({
           content: `Invalid key`,

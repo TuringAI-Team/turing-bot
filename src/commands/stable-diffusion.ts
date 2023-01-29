@@ -468,7 +468,6 @@ export default {
     }
   },
 };
-
 async function sendResults(
   images,
   interaction,

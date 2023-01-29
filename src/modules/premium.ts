@@ -43,10 +43,8 @@ export async function activateKey(key: string, id: string) {
         claimedBy: id,
         duration: duration,
       })
-
       // Filters
-      .eq("key", key)
-      .eq("claimed", false);
+      .eq("key", key);
     return {
       message: "Premium activated successfully",
     };
