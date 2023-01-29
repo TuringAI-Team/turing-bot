@@ -434,6 +434,7 @@ export default {
               interaction.user.id
             );
           } else {
+            console.log(status);
             if (status.wait_time == undefined) {
               console.log("No wait time");
               clearInterval(interval);
