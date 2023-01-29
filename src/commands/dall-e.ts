@@ -51,7 +51,6 @@ export default {
       return;
     }
     var firstOne = await accounts[0];
-    console.log(firstOne.id);
     if (!firstOne) {
       await interaction.editReply({
         content: `We are running out of credits, please wait until we solve the issue.`,
@@ -59,6 +58,8 @@ export default {
       });
       return;
     }
+    console.log(firstOne.id);
+
     if (!firstOne.key.startsWith("sk-")) {
       console.log(firstOne.id, "set to null");
       const { data, error } = await supabase
