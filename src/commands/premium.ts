@@ -39,7 +39,7 @@ export default {
         content:
           `You can buy a key to get Turing AI Premium [here](https://turingai.mysellix.io/). After buying your key you can activate your subscription using the command:` +
           "`/premium claim`",
-        ephemeral: true,
+        ephemeral: false,
       });
     } else {
       if (!key) {
