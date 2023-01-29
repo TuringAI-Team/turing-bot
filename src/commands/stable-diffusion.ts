@@ -249,51 +249,6 @@ var data = new SlashCommandBuilder()
           .setDescription("The negative prompt you want to use.")
           .setRequired(false)
       )
-  )
-  .addSubcommand((subcommand) =>
-    subcommand
-      .setName("inpainting")
-      .setDescription("Transform an image to another image in base of a text.")
-      .addAttachmentOption((option) =>
-        option
-          .setName("sourceimage")
-          .setDescription("The image option for generating the new image")
-          .setRequired(true)
-      )
-      .addStringOption((option) =>
-        option
-          .setName("prompt")
-          .setDescription("The prompt for generating an image")
-          .setRequired(true)
-      )
-      .addStringOption((option) =>
-        option
-          .setName("steps")
-          .setDescription("The number of steps to generate the image")
-          .setRequired(true)
-          .addChoices({ name: "30", value: "30" }, { name: "50", value: "50" })
-      )
-      .addStringOption((option) =>
-        option
-          .setName("type")
-          .setDescription("The type of the image you want to get")
-          .setRequired(false)
-          .addChoices(
-            { name: "realistic", value: "realistic" },
-            { name: "wallpaper", value: "wallpaper" },
-            { name: "draw", value: "drawn" },
-            { name: "anime", value: "anime" },
-            { name: "pastel", value: "pastel" },
-            { name: "watercolor", value: "watercolor" },
-            { name: "surreal", value: "surreal" }
-          )
-      )
-      .addStringOption((option) =>
-        option
-          .setName("negprompt")
-          .setDescription("The negative prompt you want to use.")
-          .setRequired(false)
-      )
   );
 export default {
   cooldown: "2m",
@@ -354,6 +309,7 @@ export default {
       if (interaction.options.getSubcommand() === "text2img") {
         generation = await generateImg(fullPrompt, m, steps, 4, nsfw);
         console.log(generation);
+
         if (generation.message) {
           if (
             generation.message.includes(
