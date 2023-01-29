@@ -74,6 +74,7 @@ export async function makeItPremium(
 }
 
 async function renew(id: string, method: string, duration: string) {
+  console.log(duration);
   const { data, error } = await supabase
     .from("premium")
     .update({
