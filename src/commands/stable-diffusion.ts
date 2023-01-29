@@ -353,6 +353,7 @@ export default {
       var generation;
       if (interaction.options.getSubcommand() === "text2img") {
         generation = await generateImg(fullPrompt, m, steps, 4, nsfw);
+        console.log(generation);
         if (generation.message) {
           if (
             generation.message.includes(
@@ -368,6 +369,7 @@ export default {
               `**Wrong prompt from __${interaction.user.tag}__** (${interaction.user.id})\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}`
             );
           }
+
           await interaction.editReply({
             content: `Something wrong happen:\n${generation.message}`,
             ephemeral: true,
