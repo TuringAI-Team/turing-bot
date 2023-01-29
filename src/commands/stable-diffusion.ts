@@ -101,6 +101,10 @@ var data = new SlashCommandBuilder()
             {
               name: "Protogen Infinity",
               value: "Protogen Infinity",
+            },
+            {
+              name: "Seek.art",
+              value: "Seek.art MEGA",
             }
           )
       )
@@ -210,6 +214,10 @@ var data = new SlashCommandBuilder()
             {
               name: "Protogen Infinity",
               value: "Protogen Infinity",
+            },
+            {
+              name: "Seek.art",
+              value: "Seek.art MEGA",
             }
           )
       )
@@ -327,10 +335,10 @@ export default {
     }
     if (models.find((x) => x.name == m && x.tags != null)) {
       var model = models.find((x) => x.name == m && x.tags != null);
-      console.log(model);
       for (var i = 0; i < model.tags.length; i++) {
         console.log(i, model.tags[i]);
         tags.push(model.tags[i]);
+        console.log(tags);
       }
     }
 

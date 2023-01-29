@@ -15,6 +15,5 @@ client.interactions = new Collection();
 eventHandler(client);
 commandHandler(client);
 interactionsHandler(client);
-rest.on("rateLimited", console.log);
 
 client.login(process.env.TOKEN);

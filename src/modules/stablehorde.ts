@@ -325,6 +325,12 @@ export var models = [
     value: "Protogen Infinity",
     tags: null,
   },
+
+  {
+    name: "Seek.art",
+    value: "Seek.art MEGA",
+    tags: null,
+  },
 ];
 
 export var types = [
