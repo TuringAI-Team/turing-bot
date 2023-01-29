@@ -327,6 +327,7 @@ export default {
     }
     if (models.find((x) => x.name == m && x.tags != null)) {
       var model = models.find((x) => x.name == m && x.tags != null);
+      console.log(model);
       for (var i = 0; i < model.tags.length; i++) {
         tags.push(model.tags[i]);
       }
