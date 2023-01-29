@@ -397,7 +397,6 @@ export default {
       var interval = setInterval(async () => {
         try {
           var status = await checkGeneration(generation);
-          console.log(status);
           if (status.done) {
             clearInterval(interval);
             const { data, error } = await supabase.from("results").insert([
