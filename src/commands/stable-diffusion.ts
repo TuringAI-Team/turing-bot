@@ -329,6 +329,7 @@ export default {
       var model = models.find((x) => x.name == m && x.tags != null);
       console.log(model);
       for (var i = 0; i < model.tags.length; i++) {
+        console.log(i, model.tags[i]);
         tags.push(model.tags[i]);
       }
     }
