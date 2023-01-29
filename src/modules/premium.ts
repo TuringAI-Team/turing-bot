@@ -1,6 +1,5 @@
 import supabase from "./supabase.js";
 import ms from "ms";
-import premium from "src/commands/premium.js";
 
 export async function isPremium(id: string) {
   let { data: premium, error } = await supabase
@@ -83,7 +82,7 @@ async function renew(id: string, method: string, duration: string, actual) {
     .update({
       renewed_at: Date.now(),
       method: method,
-      expires_at: premium[0].expires_at + ms(duration),
+      expires_at: actual.expires_at + ms(duration),
     })
     .eq("id", id);
 }
