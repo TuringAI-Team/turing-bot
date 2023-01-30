@@ -440,6 +440,7 @@ export default {
     }
     if (!cfg_scale) cfg_scale = 5;
     if (!sampler) sampler = "k_euler";
+    if (!seed) seed = getRndInteger(1, 1000000);
     try {
       var generation;
       if (interaction.options.getSubcommand() === "text2img") {
@@ -737,4 +738,7 @@ async function mergeBase64(imgs: string[]) {
 
   const dataURL = canvas.toDataURL();
   return dataURL;
+}
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
