@@ -498,58 +498,55 @@ export default {
         );
       }
 
-      async function check() {
-        var status = await checkGeneration(generation);
-        if (status.done) {
-          clearInterval(interval);
-          const { data, error } = await supabase.from("results").insert([
-            {
-              id: generation.id,
-              prompt: fullPrompt,
-              provider: m,
-              result: status.generations,
-              uses: 1,
-            },
-          ]);
-
-          await sendResults(
-            status.generations,
-            interaction,
-            m,
-            prompt,
-            FullnegPrompt,
-            steps,
-            generation.id,
-            interaction.user.id
-          );
-        } else {
-          if (status.wait_time == undefined) {
-            console.log("No wait time");
-            clearInterval(interval);
-            await interaction.editReply({
-              content: `Something wrong happen.`,
-              ephemeral: true,
-            });
-          }
-          try {
-            var waittime = status.wait_time;
-            if (waittime < 10) waittime = 10;
-            await interaction.editReply({
-              content: `Loading...(${waittime}s)`,
-            });
-          } catch (err) {
-            console.log(err);
-            clearInterval(interval);
-            await interaction.editReply({
-              content: `Something wrong happen.`,
-              ephemeral: true,
-            });
-          }
-        }
-      }
       var interval = setInterval(async () => {
         try {
-          await check();
+          var status = await checkGeneration(generation);
+          if (status.done) {
+            clearInterval(interval);
+            const { data, error } = await supabase.from("results").insert([
+              {
+                id: generation.id,
+                prompt: fullPrompt,
+                provider: m,
+                result: status.generations,
+                uses: 1,
+              },
+            ]);
+
+            await sendResults(
+              status.generations,
+              interaction,
+              m,
+              prompt,
+              FullnegPrompt,
+              steps,
+              generation.id,
+              interaction.user.id
+            );
+          } else {
+            if (status.wait_time == undefined) {
+              console.log("No wait time");
+              clearInterval(interval);
+              await interaction.editReply({
+                content: `Something wrong happen.`,
+                ephemeral: true,
+              });
+            }
+            try {
+              var waittime = status.wait_time;
+              if (waittime < 10) waittime = 10;
+              await interaction.editReply({
+                content: `Loading...(${waittime}s)`,
+              });
+            } catch (err) {
+              console.log(err);
+              clearInterval(interval);
+              await interaction.editReply({
+                content: `Something wrong happen.`,
+                ephemeral: true,
+              });
+            }
+          }
         } catch (err) {
           console.log(err);
           clearInterval(interval);
