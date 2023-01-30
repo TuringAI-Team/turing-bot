@@ -29,7 +29,12 @@ export async function generateImg(
   model: string,
   steps: number,
   amount: number,
-  nsfw: boolean
+  nsfw: boolean,
+  cfg_scale,
+  sampler,
+  seed,
+  width,
+  height
 ) {
   var passFilter = await filter(prompt, model);
   if (!passFilter) {
@@ -49,6 +54,11 @@ export async function generateImg(
     params: {
       n: amount,
       steps: steps,
+      cfg_scale,
+      sampler_name: sampler,
+      seed,
+      width,
+      height,
     },
   });
   console.log(generation);
@@ -61,7 +71,12 @@ export async function generateImg2img(
   amount: number,
   nsfw: boolean,
   source_image: string,
-  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes]
+  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes],
+  cfg_scale,
+  sampler,
+  seed,
+  width,
+  height
 ) {
   var passFilter = await filter(prompt, model);
   if (!passFilter) {
@@ -83,46 +98,17 @@ export async function generateImg2img(
     params: {
       n: amount,
       steps: steps,
+      cfg_scale,
+      sampler_name: sampler,
+      seed,
+      width,
+      height,
     },
   });
   console.log(generation);
   return generation;
 }
 
-export async function generateInpaiting(
-  prompt: string,
-  steps: number,
-  amount: number,
-  nsfw: boolean,
-  source_image: string,
-  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes],
-  source_mask
-) {
-  var passFilter = await filter(prompt);
-  if (!passFilter) {
-    return {
-      message:
-        "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
-    };
-  }
-  const generation = await stable_horde.postAsyncGenerate({
-    prompt: prompt,
-    nsfw: nsfw,
-    censor_nsfw: nsfw == true ? false : true,
-    r2: false,
-    shared: true,
-    source_image,
-    source_processing,
-    source_mask,
-    params: {
-      n: amount,
-      steps: steps,
-    },
-    trusted_workers: true,
-  });
-  console.log(generation);
-  return generation;
-}
 export async function png2webp(pngUrl) {
   const response = await axios.get(pngUrl, { responseType: "arraybuffer" });
   const imageBuffer = Buffer.from(response.data, "binary");
@@ -132,19 +118,6 @@ export async function png2webp(pngUrl) {
   const webpBase64 = webpBuffer.toString("base64");
 
   return webpBase64;
-}
-
-export async function generateMasks(webp) {
-  const buffer = Buffer.from(webp, "base64");
-  var data = await sharp(buffer)
-    .threshold(128)
-    .toFormat("webp")
-    .toBuffer()
-    .catch((err) => {
-      console.log(err);
-    });
-  const result = data.toString("base64");
-  return result;
 }
 
 async function filter(prompt, model?) {

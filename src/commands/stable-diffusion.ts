@@ -13,13 +13,10 @@ import supabase from "../modules/supabase.js";
 import {
   checkGeneration,
   generateImg,
-  getModels,
   generateImg2img,
   models,
   types,
-  generateInpaiting,
   png2webp,
-  generateMasks,
 } from "../modules/stablehorde.js";
 import { isPremium } from "../modules/premium.js";
 import { createCanvas, loadImage, Image } from "canvas";
@@ -113,7 +110,11 @@ var data = new SlashCommandBuilder()
           .setName("steps")
           .setDescription("The number of steps to generate the image")
           .setRequired(true)
-          .addChoices({ name: "30", value: "30" }, { name: "50", value: "50" })
+          .addChoices(
+            { name: "30", value: "30" },
+            { name: "50", value: "50" },
+            { name: "100(Premium only)", value: "100" }
+          )
       )
       .addStringOption((option) =>
         option
@@ -135,6 +136,53 @@ var data = new SlashCommandBuilder()
           .setName("negprompt")
           .setDescription("The negative prompt you want to use.")
           .setRequired(false)
+      )
+      .addStringOption((option) =>
+        option
+          .setName("cfg_scale")
+          .setDescription(
+            "Its how much the AI listens to your prompt, essentially."
+          )
+          .setRequired(false)
+      )
+      .addStringOption((option) =>
+        option
+          .setName("sampler")
+          .setDescription(".")
+          .setRequired(false)
+          .addChoices(
+            { name: "k_lms", value: "k_lms" },
+            { name: "k_heun", value: "k_heun" },
+            { name: "k_dpm_2", value: "k_dpm_2" },
+            { name: "k_dpm_2_a", value: "k_dpm_2_a" },
+            { name: "DDIM", value: "DDIM" },
+            { name: "PLMS", value: "PLMS" },
+            { name: "k_dpm_fast", value: "k_dpm_fast" },
+            { name: "k_dpm_adaptive", value: "k_dpm_adaptive" },
+            { name: "k_dpmpp_2s_a ", value: "k_dpmpp_2s_a" },
+            { name: "k_dpmpp_2m", value: "k_dpmpp_2m" },
+            { name: "dpmsolver", value: "dpmsolver" }
+          )
+      )
+      .addStringOption((option) =>
+        option
+          .setName("seed")
+          .setDescription("The seed to use to generete this request.")
+          .setRequired(false)
+      )
+      .addStringOption((option) =>
+        option
+          .setName("size")
+          .setDescription("The size of the images.")
+          .setRequired(false)
+          .addChoices(
+            { name: "512x512", value: "512x512" },
+            { name: "512x640", value: "512x640" },
+            { name: "640x512", value: "640x512" },
+            { name: "640x640", value: "640x640" },
+            { name: "768x512(Premium only)", value: "768x512" },
+            { name: "512x768(Premium only)", value: "512x768" }
+          )
       )
   )
   .addSubcommand((subcommand) =>
@@ -249,6 +297,53 @@ var data = new SlashCommandBuilder()
           .setDescription("The negative prompt you want to use.")
           .setRequired(false)
       )
+      .addStringOption((option) =>
+        option
+          .setName("cfg_scale")
+          .setDescription(
+            "Its how much the AI listens to your prompt, essentially."
+          )
+          .setRequired(false)
+      )
+      .addStringOption((option) =>
+        option
+          .setName("sampler")
+          .setDescription(".")
+          .setRequired(false)
+          .addChoices(
+            { name: "k_lms", value: "k_lms" },
+            { name: "k_heun", value: "k_heun" },
+            { name: "k_dpm_2", value: "k_dpm_2" },
+            { name: "k_dpm_2_a", value: "k_dpm_2_a" },
+            { name: "DDIM", value: "DDIM" },
+            { name: "PLMS", value: "PLMS" },
+            { name: "k_dpm_fast", value: "k_dpm_fast" },
+            { name: "k_dpm_adaptive", value: "k_dpm_adaptive" },
+            { name: "k_dpmpp_2s_a ", value: "k_dpmpp_2s_a" },
+            { name: "k_dpmpp_2m", value: "k_dpmpp_2m" },
+            { name: "dpmsolver", value: "dpmsolver" }
+          )
+      )
+      .addStringOption((option) =>
+        option
+          .setName("seed")
+          .setDescription("The seed to use to generete this request.")
+          .setRequired(false)
+      )
+      .addStringOption((option) =>
+        option
+          .setName("size")
+          .setDescription("The size of the images.")
+          .setRequired(false)
+          .addChoices(
+            { name: "512x512", value: "512x512" },
+            { name: "512x640", value: "512x640" },
+            { name: "640x512", value: "640x512" },
+            { name: "640x640", value: "640x640" },
+            { name: "768x512(Premium only)", value: "768x512" },
+            { name: "512x768(Premium only)", value: "512x768" }
+          )
+      )
   );
 export default {
   cooldown: "2m",
@@ -257,6 +352,7 @@ export default {
    */
   async execute(interaction, client) {
     var tags = [];
+    var ispremium = await isPremium(interaction.user.id);
     if (
       interaction.channel &&
       interaction.channel.id != "1049275551568896000" &&
@@ -271,6 +367,10 @@ export default {
     }
     var s = parseInt(interaction.options.getString("steps"));
     var t = interaction.options.getString("type");
+    var cfg_scale = parseInt(interaction.options.getString("cfg_scale"));
+    var sampler = interaction.options.getString("sampler");
+    var seed = interaction.options.getString("seed");
+    var size = interaction.options.getString("size");
 
     if (s != 30 && s != 50 && s != 100 && s != 150) {
       await interaction.reply({
@@ -279,35 +379,81 @@ export default {
       });
       return;
     }
+    if (s >= 100 && ispremium == false) {
+      await interaction.reply({
+        content:
+          `This option is for premium users only, If you want to donate to get premium use the command ` +
+          "`/premium buy` .",
+        ephemeral: true,
+      });
+    }
     const steps: 30 | 50 | 100 | 150 = s;
+
     var prompt = interaction.options.getString("prompt");
     const negPrompt = interaction.options.getString("negprompt");
     var m = interaction.options.getString("model");
 
+    console.log(tags);
     if (types.find((x) => x.name == t)) {
       var ts = types.find((x) => x.name == t);
-      tags = ts.tags;
+      for (var i = 0; i < ts.tags.length; i++) {
+        console.log(i, ts.tags[i]);
+        tags.push(ts.tags[i]);
+      }
     }
+    console.log(tags);
     if (models.find((x) => x.name == m && x.tags != null)) {
       var model = models.find((x) => x.name == m && x.tags != null);
       for (var i = 0; i < model.tags.length; i++) {
         console.log(i, model.tags[i]);
         tags.push(model.tags[i]);
-        console.log(tags);
       }
     }
+    console.log(tags);
 
     prompt = `${prompt}, ${tags.join(", ")}`;
     await interaction.deferReply();
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
     var nsfw = false;
-    var FullnegPrompt = `${negPrompt}, ${defaultNegPrompt}`;
+    var FullnegPrompt = defaultNegPrompt;
+    if (negPrompt) FullnegPrompt = negPrompt;
     var fullPrompt = `${prompt} ### ${negPrompt}`;
+
     if (interaction.channel && interaction.channel.nsfw) nsfw = true;
+
+    var width = 512;
+    var height = 512;
+    if (size) {
+      width = parseInt(size.split("x")[0]);
+      height = parseInt(size.split("x")[1]);
+      if (
+        (width >= 768 && ispremium == false) ||
+        (height >= 768 && ispremium == false)
+      ) {
+        await interaction.reply({
+          content:
+            `This option is for premium users only, If you want to donate to get premium use the command ` +
+            "`/premium buy` .",
+          ephemeral: true,
+        });
+      }
+    }
+
     try {
       var generation;
       if (interaction.options.getSubcommand() === "text2img") {
-        generation = await generateImg(fullPrompt, m, steps, 4, nsfw);
+        generation = await generateImg(
+          fullPrompt,
+          m,
+          steps,
+          4,
+          nsfw,
+          cfg_scale,
+          sampler,
+          seed,
+          width,
+          height
+        );
         console.log(generation);
 
         if (generation.message) {
@@ -342,73 +488,81 @@ export default {
           2,
           nsfw,
           image,
-          StableHorde.SourceImageProcessingTypes.img2img
-        );
-      } else if (interaction.options.getSubcommand() === "inpainting") {
-        const attachment = interaction.options.getAttachment("sourceimage");
-        var image = await png2webp(attachment.url);
-        var source_mask = await generateMasks(image);
-
-        generation = await generateInpaiting(
-          prompt,
-          steps,
-          1,
-          nsfw,
-          image,
-          StableHorde.SourceImageProcessingTypes.inpainting,
-          source_mask
+          StableHorde.SourceImageProcessingTypes.img2img,
+          cfg_scale,
+          sampler,
+          seed,
+          width,
+          height
         );
       }
 
+      async function check() {
+        var status = await checkGeneration(generation);
+        if (status.done) {
+          clearInterval(interval);
+          const { data, error } = await supabase.from("results").insert([
+            {
+              id: generation.id,
+              prompt: fullPrompt,
+              provider: m,
+              result: status.generations,
+              uses: 1,
+            },
+          ]);
+
+          await sendResults(
+            status.generations,
+            interaction,
+            m,
+            prompt,
+            FullnegPrompt,
+            steps,
+            generation.id,
+            interaction.user.id
+          );
+        } else {
+          if (status.wait_time == undefined) {
+            console.log("No wait time");
+            clearInterval(interval);
+            await interaction.editReply({
+              content: `Something wrong happen.`,
+              ephemeral: true,
+            });
+          }
+          try {
+            var waittime = status.wait_time;
+            if (waittime < 15) {
+              clearInterval(interval);
+              setTimeout(async () => {
+                try {
+                  await check();
+                } catch (err) {
+                  console.log(err);
+                  clearInterval(interval);
+                  await interaction.editReply({
+                    content: `Something wrong happen.`,
+                    ephemeral: true,
+                  });
+                }
+              }, waittime * 1000 + 2000);
+            }
+            await interaction.editReply({
+              content: `Loading...(${waittime}s)`,
+            });
+          } catch (err) {
+            console.log(err);
+            clearInterval(interval);
+            await interaction.editReply({
+              content: `Something wrong happen.`,
+              ephemeral: true,
+            });
+          }
+        }
+      }
       var interval = setInterval(async () => {
         try {
-          var status = await checkGeneration(generation);
-          if (status.done) {
-            clearInterval(interval);
-            const { data, error } = await supabase.from("results").insert([
-              {
-                id: generation.id,
-                prompt: fullPrompt,
-                provider: m,
-                result: status.generations,
-                uses: 1,
-              },
-            ]);
-
-            await sendResults(
-              status.generations,
-              interaction,
-              m,
-              prompt,
-              FullnegPrompt,
-              steps,
-              generation.id,
-              interaction.user.id
-            );
-          } else {
-            if (status.wait_time == undefined) {
-              console.log("No wait time");
-              clearInterval(interval);
-              await interaction.editReply({
-                content: `Something wrong happen.`,
-                ephemeral: true,
-              });
-            }
-            try {
-              var waittime = status.wait_time;
-              if (waittime < 15) waittime = 15;
-              await interaction.editReply({
-                content: `Loading...(${waittime}s)`,
-              });
-            } catch (err) {
-              console.log(err);
-              clearInterval(interval);
-              await interaction.editReply({
-                content: `Something wrong happen.`,
-                ephemeral: true,
-              });
-            }
-          }
+          await check();
         } catch (err) {
           console.log(err);
           clearInterval(interval);
@@ -426,6 +580,7 @@ export default {
     }
   },
 };
+
 async function sendResults(
   images,
   interaction,
