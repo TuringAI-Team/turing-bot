@@ -627,7 +627,7 @@ async function sendResults(
     return sfbuff;
   });
 
-  let base64: any = await mergeBase64(imgs);
+  let base64: any = await mergeBase64(imgs, width, height);
   base64 = base64.split("base64,")[1];
   var sfbuff = Buffer.from(base64, "base64");
   var resfile = new AttachmentBuilder(sfbuff, { name: "output.png" });
@@ -700,16 +700,15 @@ async function sendResults(
   }*/
 }
 
-async function mergeBase64(imgs: string[]) {
-  var totalW = 512;
-  var totalH = 512;
+async function mergeBase64(imgs: string[], width, height) {
+  var totalW = width / 2;
+  var totalH = height / 2;
   if (imgs.length == 1) {
-    totalW = 256;
-    totalH = 256;
+    totalW = totalW / 2;
+    totalH = totalH / 2;
   }
   if (imgs.length == 2) {
-    totalW = 512;
-    totalH = 256;
+    totalH = totalH / 2;
   }
   const canvas = createCanvas(totalW, totalH);
   const ctx = canvas.getContext("2d");
@@ -726,18 +725,18 @@ async function mergeBase64(imgs: string[]) {
       y = 0;
     }
     if (i == 1) {
-      x = 256;
+      x = totalW;
       y = 0;
     }
     if (i == 2) {
       x = 0;
-      y = 256;
+      y = totalH;
     }
     if (i == 3) {
-      x = 256;
-      y = 256;
+      x = totalW;
+      y = totalH;
     }
-    img.onload = () => ctx.drawImage(img, x, y, 256, 256);
+    img.onload = () => ctx.drawImage(img, x, y, width / 2, height / 2);
     img.onerror = (err) => {
       throw err;
     };
