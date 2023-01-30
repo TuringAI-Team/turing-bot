@@ -532,21 +532,7 @@ export default {
           }
           try {
             var waittime = status.wait_time;
-            if (waittime < 15) {
-              clearInterval(interval);
-              setTimeout(async () => {
-                try {
-                  await check();
-                } catch (err) {
-                  console.log(err);
-                  clearInterval(interval);
-                  await interaction.editReply({
-                    content: `Something wrong happen.`,
-                    ephemeral: true,
-                  });
-                }
-              }, waittime * 1000 + 2000);
-            }
+            if (waittime < 10) waittime = 10;
             await interaction.editReply({
               content: `Loading...(${waittime}s)`,
             });
@@ -571,7 +557,7 @@ export default {
             ephemeral: true,
           });
         }
-      }, 15000);
+      }, 10000);
     } catch (e) {
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
