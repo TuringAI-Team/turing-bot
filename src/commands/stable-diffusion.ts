@@ -725,16 +725,16 @@ async function mergeBase64(imgs: string[], width, height) {
       y = 0;
     }
     if (i == 1) {
-      x = totalW;
+      x = width / 2;
       y = 0;
     }
     if (i == 2) {
       x = 0;
-      y = totalH;
+      y = height / 2;
     }
     if (i == 3) {
-      x = totalW;
-      y = totalH;
+      x = width / 2;
+      y = height / 2;
     }
     img.onload = () => ctx.drawImage(img, x, y, width / 2, height / 2);
     img.onerror = (err) => {
