@@ -374,6 +374,7 @@ export default {
           "`/premium buy` .",
         ephemeral: true,
       });
+      return;
     }
     const steps: 30 | 50 | 100 | 150 = s;
 
@@ -400,7 +401,6 @@ export default {
     console.log(tags);
 
     prompt = `${prompt}, ${tags.join(", ")}`;
-    await interaction.deferReply();
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
     var nsfw = false;
     var FullnegPrompt = defaultNegPrompt;
@@ -424,8 +424,11 @@ export default {
             "`/premium buy` .",
           ephemeral: true,
         });
+        return;
       }
     }
+    await interaction.deferReply();
+
     if (!cfg_scale) cfg_scale = 5;
     if (!sampler) sampler = "k_euler";
     try {
