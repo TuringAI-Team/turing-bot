@@ -438,7 +438,8 @@ export default {
         });
       }
     }
-
+    if (!cfg_scale) cfg_scale = 5;
+    if (!sampler) sampler = "k_euler";
     try {
       var generation;
       if (interaction.options.getSubcommand() === "text2img") {
