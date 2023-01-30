@@ -32,7 +32,6 @@ export async function generateImg(
   nsfw: boolean,
   cfg_scale,
   sampler,
-  seed,
   width,
   height
 ) {
@@ -56,7 +55,6 @@ export async function generateImg(
       steps: steps,
       cfg_scale,
       sampler_name: sampler,
-      seed,
       width,
       height,
     },
@@ -74,7 +72,6 @@ export async function generateImg2img(
   source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes],
   cfg_scale,
   sampler,
-  seed,
   width,
   height
 ) {
@@ -100,7 +97,6 @@ export async function generateImg2img(
       steps: steps,
       cfg_scale,
       sampler_name: sampler,
-      seed,
       width,
       height,
     },

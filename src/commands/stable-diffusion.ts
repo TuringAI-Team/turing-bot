@@ -164,12 +164,7 @@ var data = new SlashCommandBuilder()
             { name: "dpmsolver", value: "dpmsolver" }
           )
       )
-      .addStringOption((option) =>
-        option
-          .setName("seed")
-          .setDescription("The seed to use to generete this request.")
-          .setRequired(false)
-      )
+
       .addStringOption((option) =>
         option
           .setName("size")
@@ -326,12 +321,6 @@ var data = new SlashCommandBuilder()
       )
       .addStringOption((option) =>
         option
-          .setName("seed")
-          .setDescription("The seed to use to generete this request.")
-          .setRequired(false)
-      )
-      .addStringOption((option) =>
-        option
           .setName("size")
           .setDescription("The size of the images.")
           .setRequired(false)
@@ -369,7 +358,6 @@ export default {
     var t = interaction.options.getString("type");
     var cfg_scale = parseInt(interaction.options.getString("cfg_scale"));
     var sampler = interaction.options.getString("sampler");
-    var seed = interaction.options.getString("seed");
     var size = interaction.options.getString("size");
 
     if (s != 30 && s != 50 && s != 100 && s != 150) {
@@ -440,7 +428,6 @@ export default {
     }
     if (!cfg_scale) cfg_scale = 5;
     if (!sampler) sampler = "k_euler";
-    if (!seed) seed = getRndInteger(1, 1000000);
     try {
       var generation;
       if (interaction.options.getSubcommand() === "text2img") {
@@ -452,7 +439,6 @@ export default {
           nsfw,
           cfg_scale,
           sampler,
-          seed,
           width,
           height
         );
@@ -493,7 +479,6 @@ export default {
           StableHorde.SourceImageProcessingTypes.img2img,
           cfg_scale,
           sampler,
-          seed,
           width,
           height
         );
@@ -522,7 +507,11 @@ export default {
               FullnegPrompt,
               steps,
               generation.id,
-              interaction.user.id
+              interaction.user.id,
+              cfg_scale,
+              sampler,
+              width,
+              height
             );
           } else {
             if (status.wait_time == undefined) {
@@ -574,7 +563,11 @@ async function sendResults(
   negPrompt: string,
   steps,
   id: string,
-  userId
+  userId,
+  cfg_scale,
+  sampler,
+  width,
+  height
 ) {
   var imagesArr = images.map(async (g, i) => {
     const sfbuff = Buffer.from(g.img, "base64");
@@ -606,6 +599,21 @@ async function sendResults(
       {
         name: "Model",
         value: `${m}`,
+        inline: true,
+      },
+      {
+        name: "cfg_scale",
+        value: `${cfg_scale}`,
+        inline: true,
+      },
+      {
+        name: "Sampler",
+        value: `${sampler}`,
+        inline: true,
+      },
+      {
+        name: "Size",
+        value: `${width}x${height}`,
         inline: true,
       }
     );
