@@ -329,7 +329,6 @@ var data = new SlashCommandBuilder()
             { name: "512x640", value: "512x640" },
             { name: "640x512", value: "640x512" },
             { name: "640x640", value: "640x640" },
-            { name: "768x512(Premium only)", value: "768x512" },
             { name: "512x768(Premium only)", value: "512x768" }
           )
       )
