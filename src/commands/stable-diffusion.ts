@@ -44,10 +44,6 @@ var data = new SlashCommandBuilder()
           .setRequired(true)
           .addChoices(
             {
-              name: "Stable diffusion v2.1",
-              value: "stable_diffusion_2.1",
-            },
-            {
               name: "Stable diffusion v2.0",
               value: "stable_diffusion_2.0",
             },
@@ -234,10 +230,6 @@ var data = new SlashCommandBuilder()
           .setDescription("The stable diffusion model you want to use")
           .setRequired(true)
           .addChoices(
-            {
-              name: "Stable diffusion v2.1",
-              value: "stable_diffusion_2.1",
-            },
             {
               name: "Stable diffusion v2.0",
               value: "stable_diffusion_2.0",

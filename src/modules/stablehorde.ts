@@ -217,11 +217,6 @@ export async function generateRateRow(generationId, userId, imageId) {
 
 export var models = [
   {
-    name: "Stable diffusion v2.1",
-    value: "stable_diffusion_2.1",
-    tags: null,
-  },
-  {
     name: "Stable diffusion v2.0",
     value: "stable_diffusion_2.0",
     tags: null,
