@@ -299,6 +299,36 @@ export var models = [
     value: "Seek.art MEGA",
     tags: null,
   },
+  {
+    name: "PortraitPlus",
+    value: "PortraitPlus",
+    tags: ["portrait"],
+  },
+  {
+    name: "3DKX",
+    value: "3DKX",
+    tags: null,
+  },
+  {
+    name: "Arcane Diffusion",
+    value: "Arcane Diffusion",
+    tags: ["arcane style"],
+  },
+  {
+    name: "HASDX",
+    value: "HASDX",
+    tags: null,
+  },
+  {
+    name: "Robo-Diffusion",
+    value: "Robo-Diffusion",
+    tags: ["nousr robot"],
+  },
+  {
+    name: "Anygen",
+    value: "Anygen",
+    tags: null,
+  },
 ];
 
 export var types = [

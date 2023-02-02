@@ -102,6 +102,30 @@ var data = new SlashCommandBuilder()
             {
               name: "Seek.art",
               value: "Seek.art MEGA",
+            },
+            {
+              name: "PortraitPlus",
+              value: "PortraitPlus",
+            },
+            {
+              name: "3DKX",
+              value: "3DKX",
+            },
+            {
+              name: "Arcane Diffusion",
+              value: "Arcane Diffusion",
+            },
+            {
+              name: "HASDX",
+              value: "HASDX",
+            },
+            {
+              name: "Robo-Diffusion",
+              value: "Robo-Diffusion",
+            },
+            {
+              name: "Anygen",
+              value: "Anygen",
             }
           )
       )
@@ -261,6 +285,27 @@ var data = new SlashCommandBuilder()
             {
               name: "Seek.art",
               value: "Seek.art MEGA",
+            },
+            {
+              name: "PortraitPlus",
+              value: "PortraitPlus",
+            },
+            { name: "3DKX", value: "3DKX" },
+            {
+              name: "Arcane Diffusion",
+              value: "Arcane Diffusion",
+            },
+            {
+              name: "HASDX",
+              value: "HASDX",
+            },
+            {
+              name: "Robo-Diffusion",
+              value: "Robo-Diffusion",
+            },
+            {
+              name: "Anygen",
+              value: "Anygen",
             }
           )
       )
