@@ -126,6 +126,14 @@ var data = new SlashCommandBuilder()
             {
               name: "Anygen",
               value: "Anygen",
+            },
+            {
+              name: "vectorartz",
+              value: "vectorartz",
+            },
+            {
+              name: "Papercut Diffusion",
+              value: "Papercut Diffusion",
             }
           )
       )
@@ -306,6 +314,14 @@ var data = new SlashCommandBuilder()
             {
               name: "Anygen",
               value: "Anygen",
+            },
+            {
+              name: "vectorartz",
+              value: "vectorartz",
+            },
+            {
+              name: "Papercut Diffusion",
+              value: "Papercut Diffusion",
             }
           )
       )

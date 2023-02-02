@@ -329,6 +329,16 @@ export var models = [
     value: "Anygen",
     tags: null,
   },
+  {
+    name: "vectorartz",
+    value: "vectorartz",
+    tags: ["vectorartz"],
+  },
+  {
+    name: "Papercut Diffusion",
+    value: "Papercut Diffusion",
+    tags: ["PaperCut"],
+  },
 ];
 
 export var types = [
