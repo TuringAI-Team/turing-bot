@@ -44,10 +44,6 @@ var data = new SlashCommandBuilder()
           .setRequired(true)
           .addChoices(
             {
-              name: "Stable diffusion v2.0",
-              value: "stable_diffusion_2.0",
-            },
-            {
               name: "Stable diffusion",
               value: "stable_diffusion",
             },
@@ -114,10 +110,6 @@ var data = new SlashCommandBuilder()
             {
               name: "HASDX",
               value: "HASDX",
-            },
-            {
-              name: "Robo-Diffusion",
-              value: "Robo-Diffusion",
             },
             {
               name: "Anygen",
@@ -302,10 +294,6 @@ var data = new SlashCommandBuilder()
             {
               name: "HASDX",
               value: "HASDX",
-            },
-            {
-              name: "Robo-Diffusion",
-              value: "Robo-Diffusion",
             },
             {
               name: "Anygen",
