@@ -112,7 +112,7 @@ export default {
     if (interaction.options.getSubcommand() === "url") {
       var url = interaction.options.getString("url");
       if (url.includes("youtube.com")) {
-        const file = ytdl(url, { filter: "audioonly" });
+        const file = getBuffer(url);
         console.log(file);
       } else {
         file = await getFile(url);
@@ -146,7 +146,17 @@ export default {
     }
   },
 };
-
+async function getBuffer(url) {
+  return new Promise((resolve, reject) => {
+    ytdl(url, { filter: "audioonly" })
+      .on("error", reject)
+      // @ts-ignore
+      .pipe(Buffer.alloc(0), (err, buffer) => {
+        if (err) reject(err);
+        else resolve(buffer);
+      });
+  });
+}
 async function getTranscription(file, model) {
   try {
     const response = await axios({
