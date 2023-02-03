@@ -190,10 +190,10 @@ export default {
       await interaction.editReply("Success");
     } else if (interaction.options.getSubcommand() === "file") {
       var file = interaction.options.getAttachment("file");
-      //  file = await getFile(file.url);
-      //console.log(file);
+      file = await getFile(file.url);
+      console.log(file);
       var result = await getTranscription(
-        file.url,
+        file,
         model,
         transcription,
         translate
@@ -231,10 +231,8 @@ async function getTranscription(file, model, transcription, translate) {
 }
 
 async function getFile(url) {
-  const response = await axios({
-    url,
-    method: "GET",
-  });
+  const response = await axios.get(url, { responseType: "arraybuffer" });
+  const buffer = Buffer.from(response.data, "binary");
 
-  return response.data;
+  return buffer;
 }
