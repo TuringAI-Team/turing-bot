@@ -112,7 +112,7 @@ export default {
     if (interaction.options.getSubcommand() === "url") {
       var url = interaction.options.getString("url");
       if (url.includes("youtube.com")) {
-        const file = getBuffer(url);
+        const file = await getBuffer(url);
         console.log(file);
       } else {
         file = await getFile(url);
