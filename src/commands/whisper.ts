@@ -56,40 +56,6 @@ var data = new SlashCommandBuilder()
             }
           )
       )
-      .addStringOption((option) =>
-        option
-          .setName("transcription")
-          .setDescription("The transcription result you want to receive")
-          .setRequired(true)
-          .addChoices(
-            {
-              name: "plain text",
-              value: "plain text",
-            },
-            {
-              name: "Subtitles",
-              value: "srt",
-            }
-          )
-      )
-      .addStringOption((option) =>
-        option
-          .setName("translate")
-          .setDescription(
-            "If you want to translate the audio to english or not"
-          )
-          .setRequired(false)
-          .addChoices(
-            {
-              name: "translate to english",
-              value: "true",
-            },
-            {
-              name: "mantain language",
-              value: "false",
-            }
-          )
-      )
   )
   .addSubcommand((subcommand) =>
     subcommand
@@ -130,40 +96,6 @@ var data = new SlashCommandBuilder()
             }
           )
       )
-      .addStringOption((option) =>
-        option
-          .setName("transcription")
-          .setDescription("The transcription result you want to receive")
-          .setRequired(true)
-          .addChoices(
-            {
-              name: "plain text",
-              value: "plain text",
-            },
-            {
-              name: "Subtitles",
-              value: "srt",
-            }
-          )
-      )
-      .addStringOption((option) =>
-        option
-          .setName("translate")
-          .setDescription(
-            "If you want to translate the audio to english or not"
-          )
-          .setRequired(false)
-          .addChoices(
-            {
-              name: "translate to english",
-              value: "true",
-            },
-            {
-              name: "mantain language",
-              value: "false",
-            }
-          )
-      )
   );
 export default {
   cooldown: "2m",
@@ -172,7 +104,6 @@ export default {
    */
   async execute(interaction, client) {
     var model = interaction.options.getString("model");
-    var transcription = interaction.options.getString("transcription");
     var translate = interaction.options.getString("translate");
     if (translate == "true") translate = true;
     if (translate == "false") translate = false;
@@ -180,24 +111,28 @@ export default {
     await interaction.deferReply();
     if (interaction.options.getSubcommand() === "url") {
       var url = interaction.options.getString("url");
-      const file = ytdl(url, { filter: "audioonly" });
-      var result = await getTranscription(
-        file,
-        model,
-        transcription,
-        translate
-      );
-      await interaction.editReply("Success");
+      if (url.includes("youtube.com")) {
+        const file = ytdl(url, { filter: "audioonly" });
+        console.log(file);
+      } else {
+        file = await getFile(url);
+      }
+
+      var result = await getTranscription(file, model);
+      if (result.error) {
+        await interaction.editReply({
+          content: result.error,
+          ephemeral: true,
+        });
+        return;
+      }
+      if (result.text) {
+        await interaction.editReply(`**Transcription:** ${result.text}`);
+      }
     } else if (interaction.options.getSubcommand() === "file") {
       var file = interaction.options.getAttachment("file");
       file = await getFile(file.url);
-      console.log(file);
-      var result = await getTranscription(
-        file,
-        model,
-        transcription,
-        translate
-      );
+      var result = await getTranscription(file, model);
       if (result.error) {
         await interaction.editReply({
           content: result.error,
@@ -212,7 +147,7 @@ export default {
   },
 };
 
-async function getTranscription(file, model, transcription, translate) {
+async function getTranscription(file, model) {
   try {
     const response = await axios({
       baseURL: `https://api-inference.huggingface.co/models/openai/whisper-${model}`,
@@ -221,27 +156,7 @@ async function getTranscription(file, model, transcription, translate) {
       data: file,
     });
     const result = response.data;
-    console.log(result.data);
     return result.data;
-    var res = await axios({
-      baseURL: "https://api.replicate.com/v1/prediction",
-      headers: {
-        Authorization: `Token ${process.env.REPLICATE_KEY}`,
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify({
-        version:
-          "30414ee7c4fffc37e260fcab7842b5be470b9b840f2b608f5baa9bbef9a259ed",
-        input: {
-          audio: file,
-          model,
-          //  transcription,
-          //translate,
-        },
-      }),
-    });
-    console.log(res.data);
-    return res.data;
   } catch (err) {
     console.log(err);
     return { error: err };
