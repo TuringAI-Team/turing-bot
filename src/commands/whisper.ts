@@ -211,7 +211,8 @@ async function getTranscription(file, model, transcription, translate) {
         "Content-Type": "application/json",
       },
       data: JSON.stringify({
-        version: "",
+        version:
+          "30414ee7c4fffc37e260fcab7842b5be470b9b840f2b608f5baa9bbef9a259ed",
         input: {
           audio: file,
           model,
