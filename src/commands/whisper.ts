@@ -17,7 +17,7 @@ import ytdl from "ytdl-core";
 var data = new SlashCommandBuilder()
   .setName("whisper")
   .setDescription("Generate an image using stable diffusion.")
-  .addSubcommand((subcommand) =>
+  /*.addSubcommand((subcommand) =>
     subcommand
       .setName("url")
       .setDescription("Transform an audio url in to text(youtube supported).")
@@ -56,7 +56,7 @@ var data = new SlashCommandBuilder()
             }
           )
       )
-  )
+  )*/
   .addSubcommand((subcommand) =>
     subcommand
       .setName("file")
