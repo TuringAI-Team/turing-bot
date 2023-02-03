@@ -199,10 +199,15 @@ export default {
         translate
       );
       if (result.error) {
-        await interaction.editReply(result.error);
+        await interaction.editReply({
+          content: result.error,
+          ephemeral: true,
+        });
         return;
       }
-      await interaction.editReply("Success");
+      if (result.text) {
+        await interaction.editReply(`**Transcription:** ${result.text}`);
+      }
     }
   },
 };
