@@ -198,6 +198,10 @@ export default {
         transcription,
         translate
       );
+      if (result.error) {
+        await interaction.editReply(result.error);
+        return;
+      }
       await interaction.editReply("Success");
     }
   },
@@ -211,9 +215,9 @@ async function getTranscription(file, model, transcription, translate) {
       method: "POST",
       data: file,
     });
-    const result = await response.data;
-    console.log(result);
-    return result;
+    const result = response.data;
+    console.log(result.data);
+    return result.data;
     var res = await axios({
       baseURL: "https://api.replicate.com/v1/prediction",
       headers: {
