@@ -223,6 +223,7 @@ async function getTranscription(file, model, transcription, translate) {
     console.log(res.data);
     return res.data;
   } catch (err) {
+    console.log(err);
     return { error: err };
   }
 }
