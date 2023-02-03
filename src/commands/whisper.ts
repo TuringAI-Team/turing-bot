@@ -205,15 +205,13 @@ export default {
 
 async function getTranscription(file, model, transcription, translate) {
   try {
-    const response = await fetch(
-      `https://api-inference.huggingface.co/models/openai/whisper-${model}`,
-      {
-        headers: { Authorization: `Bearer ${process.env.HF}` },
-        method: "POST",
-        body: file,
-      }
-    );
-    const result = await response.json();
+    const response = await axios({
+      baseURL: `https://api-inference.huggingface.co/models/openai/whisper-${model}`,
+      headers: { Authorization: `Bearer ${process.env.HF}` },
+      method: "POST",
+      data: file,
+    });
+    const result = await response.data;
     console.log(result);
     return result;
     var res = await axios({
