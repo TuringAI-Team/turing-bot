@@ -234,7 +234,6 @@ async function getFile(url) {
   const response = await axios({
     url,
     method: "GET",
-    responseType: "stream",
   });
 
   return response.data;
