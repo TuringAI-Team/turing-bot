@@ -205,6 +205,17 @@ export default {
 
 async function getTranscription(file, model, transcription, translate) {
   try {
+    const response = await fetch(
+      `https://api-inference.huggingface.co/models/openai/whisper-${model}`,
+      {
+        headers: { Authorization: `Bearer ${process.env.HF}` },
+        method: "POST",
+        body: file,
+      }
+    );
+    const result = await response.json();
+    console.log(result);
+    return result;
     var res = await axios({
       baseURL: "https://api.replicate.com/v1/prediction",
       headers: {
@@ -217,8 +228,8 @@ async function getTranscription(file, model, transcription, translate) {
         input: {
           audio: file,
           model,
-          transcription,
-          translate,
+          //  transcription,
+          //translate,
         },
       }),
     });
