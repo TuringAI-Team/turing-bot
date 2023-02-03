@@ -334,6 +334,16 @@ export var models = [
     value: "Papercut Diffusion",
     tags: ["PaperCut"],
   },
+  {
+    name: "Deliberate",
+    value: "Deliberate",
+    tags: null,
+  },
+  {
+    name: "MoistMix",
+    value: "MoistMix",
+    tags: null,
+  },
 ];
 
 export var types = [

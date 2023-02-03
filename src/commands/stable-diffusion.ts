@@ -130,6 +130,14 @@ var data = new SlashCommandBuilder()
             {
               name: "Papercut Diffusion",
               value: "Papercut Diffusion",
+            },
+            {
+              name: "Deliberate",
+              value: "Deliberate",
+            },
+            {
+              name: "MoistMix",
+              value: "MoistMix",
             }
           )
       )
@@ -310,6 +318,14 @@ var data = new SlashCommandBuilder()
             {
               name: "Papercut Diffusion",
               value: "Papercut Diffusion",
+            },
+            {
+              name: "Deliberate",
+              value: "Deliberate",
+            },
+            {
+              name: "MoistMix",
+              value: "MoistMix",
             }
           )
       )
