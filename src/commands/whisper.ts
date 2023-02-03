@@ -156,7 +156,7 @@ async function getTranscription(file, model) {
       data: file,
     });
     const result = response.data;
-    return result.data;
+    return result;
   } catch (err) {
     console.log(err);
     return { error: err };
