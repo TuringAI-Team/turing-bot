@@ -231,10 +231,6 @@ var data = new SlashCommandBuilder()
           .setRequired(true)
           .addChoices(
             {
-              name: "Stable diffusion v2.0",
-              value: "stable_diffusion_2.0",
-            },
-            {
               name: "Stable diffusion",
               value: "stable_diffusion",
             },
