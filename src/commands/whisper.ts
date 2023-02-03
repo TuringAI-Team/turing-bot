@@ -190,8 +190,8 @@ export default {
       await interaction.editReply("Success");
     } else if (interaction.options.getSubcommand() === "file") {
       var file = interaction.options.getAttachment("file");
-      console.log(file);
       file = await getFile(file.url);
+      console.log(file);
       var result = await getTranscription(
         file,
         model,
