@@ -72,7 +72,8 @@ export async function generateImg2img(
   cfg_scale,
   sampler,
   width,
-  height
+  height,
+  strength
 ) {
   var passFilter = await filter(prompt, model);
   if (!passFilter) {
@@ -98,6 +99,7 @@ export async function generateImg2img(
       sampler_name: sampler,
       width,
       height,
+      denoising_strength: strength,
     },
   });
   return generation;
@@ -149,7 +151,7 @@ async function filter(prompt, model?) {
     "jenna ortega",
     "hermione",
   ];
-  var nsfwModels = ["Hentai Diffusion", "waifu_diffusion"];
+  var nsfwModels = ["Hentai Diffusion"];
   var nsfwWords = ["naked", "nude", "uncensored"];
   var isNsfw = false;
   var isYoung = false;
@@ -218,6 +220,7 @@ export var models = [
     name: "Stable diffusion v2.0",
     value: "stable_diffusion_2.0",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/stable_diffusion/01_racebannin.webp",
   },
   {
     name: "Stable diffusion",
@@ -228,119 +231,140 @@ export var models = [
     name: "Microworlds",
     value: "Microworlds",
     tags: ["microworld render style"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/microworlds/01_bigdowg.jpg",
   },
-  { name: "Anything Diffusion", value: "Anything Diffusion" },
+  {
+    name: "Anything Diffusion",
+    value: "Anything Diffusion",
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/anything_diffusion/01.webp",
+  },
   {
     name: "Midjourney Diffusion",
     value: "Midjourney Diffusion",
     tags: ["mdjrny-v4 style"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/midjourney_diffusion/01_bigdowg.webp",
   },
-  { name: "Dreamshaper", value: "Dreamshaper", tags: null },
+  {
+    name: "Dreamshaper",
+    value: "Dreamshaper",
+    tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/dreamshaper/01_gigachad.webp",
+  },
   {
     name: "Dreamlike Photoreal",
     value: "Dreamlike Photoreal",
     tags: null,
+    img: "https://huggingface.co/dreamlike-art/dreamlike-photoreal-2.0/resolve/main/preview1.jpg",
   },
   {
     name: "Dreamlike Diffusion",
     value: "Dreamlike Diffusion",
     tags: ["dreamlikeart"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/dreamlike_diffusion/01_gigachad.webp",
   },
   {
     name: "ProtoGen",
     value: "ProtoGen",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/protogen/01_gigachad.webp",
   },
   {
     name: "Hentai Diffusion",
     value: "Hentai Diffusion",
     tags: ["1girl", "anime"],
-  },
-  {
-    name: "Waifu Diffusion",
-    value: "waifu_diffusion",
-    tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/hentai_diffusion/01_bigdowg.webp",
   },
   {
     name: "Synthwave",
     value: "Synthwave",
     tags: ["snthwve", "style"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/synthwave/01_bigdowg.webp",
   },
   {
     name: "Redshift Diffusion",
     value: "Redshift Diffusion",
     tags: ["redshift style"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/redshift/01_bigdowg.jpg",
   },
   {
     name: "Yiffy",
     value: "Yiffy",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/yiffy/01_pika.webp",
   },
-  {
-    name: "Zack3D",
-    value: "Zack3D",
-    tags: null,
-  },
+
   {
     name: "Protogen Infinity",
     value: "Protogen Infinity",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/protogen_infinity/01_gigachad.webp",
   },
 
   {
     name: "Seek.art",
     value: "Seek.art MEGA",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/seek_art_mega/01_gigachad.webp",
   },
   {
     name: "PortraitPlus",
     value: "PortraitPlus",
     tags: ["portrait"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/portraitplus/01_gigachad.webp",
   },
   {
     name: "3DKX",
     value: "3DKX",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/3dkx/01_airic.webp",
   },
   {
     name: "Arcane Diffusion",
     value: "Arcane Diffusion",
     tags: ["arcane style"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/arcane/01_bigdowg.jpg",
   },
   {
     name: "HASDX",
     value: "HASDX",
     tags: null,
-  },
-  {
-    name: "Robo-Diffusion",
-    value: "Robo-Diffusion",
-    tags: ["nousr robot"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/hasdx/01_gigachad.webp",
   },
   {
     name: "Anygen",
     value: "Anygen",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/anygen/01_gigachad.webp",
   },
   {
     name: "vectorartz",
     value: "vectorartz",
     tags: ["vectorartz"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/vectorartz/01.webp",
   },
   {
     name: "Papercut Diffusion",
     value: "Papercut Diffusion",
     tags: ["PaperCut"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/papercut/01_bigdowg.jpg",
   },
   {
     name: "Deliberate",
     value: "Deliberate",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/deliberate/01_deliberate.webp",
   },
   {
     name: "MoistMix",
     value: "MoistMix",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/moistmix/01_gigachad.webp",
+  },
+  {
+    name: "ChromaV5",
+    value: "ChromaV5",
+    tags: ["ChromaV5"],
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/chromav5/01_gigachad.webp",
   },
 ];
 

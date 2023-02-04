@@ -67,10 +67,7 @@ var data = new SlashCommandBuilder()
               name: "Hentai Diffusion",
               value: "Hentai Diffusion",
             },
-            {
-              name: "Waifu Diffusion",
-              value: "waifu_diffusion",
-            },
+
             {
               name: "Synthwave",
               value: "Synthwave",
@@ -82,10 +79,6 @@ var data = new SlashCommandBuilder()
             {
               name: "Yiffy",
               value: "Yiffy",
-            },
-            {
-              name: "Zack3D",
-              value: "Zack3D",
             },
             {
               name: "Protogen Infinity",
@@ -130,6 +123,10 @@ var data = new SlashCommandBuilder()
             {
               name: "MoistMix",
               value: "MoistMix",
+            },
+            {
+              name: "ChromaV5",
+              value: "ChromaV5",
             }
           )
       )
@@ -255,10 +252,6 @@ var data = new SlashCommandBuilder()
               value: "Hentai Diffusion",
             },
             {
-              name: "Waifu Diffusion",
-              value: "waifu_diffusion",
-            },
-            {
               name: "Synthwave",
               value: "Synthwave",
             },
@@ -269,10 +262,6 @@ var data = new SlashCommandBuilder()
             {
               name: "Yiffy",
               value: "Yiffy",
-            },
-            {
-              name: "Zack3D",
-              value: "Zack3D",
             },
             {
               name: "Protogen Infinity",
@@ -314,6 +303,10 @@ var data = new SlashCommandBuilder()
             {
               name: "MoistMix",
               value: "MoistMix",
+            },
+            {
+              name: "ChromaV5",
+              value: "ChromaV5",
             }
           )
       )
@@ -323,6 +316,33 @@ var data = new SlashCommandBuilder()
           .setDescription("The number of steps to generate the image")
           .setRequired(true)
           .addChoices({ name: "30", value: "30" }, { name: "50", value: "50" })
+      )
+      .addStringOption((option) =>
+        option
+          .setName("strength")
+          .setDescription("The strength of denoising.")
+          .setRequired(true)
+          .addChoices(
+            { name: "0%", value: "0" },
+            { name: "10%", value: "0.1" },
+            { name: "20%", value: "0.2" },
+            { name: "25%", value: "0.25" },
+            { name: "30%", value: "0.3" },
+            { name: "35%", value: "0.35" },
+            { name: "40%", value: "0.4" },
+            { name: "45%", value: "0.45" },
+            { name: "50%", value: "0.5" },
+            { name: "55%", value: "0.55" },
+            { name: "60%", value: "0.6" },
+            { name: "65%", value: "0.65" },
+            { name: "70%", value: "0.7" },
+            { name: "75%", value: "0.75" },
+            { name: "80%", value: "0.8" },
+            { name: "85%", value: "0.85" },
+            { name: "90%", value: "0.9" },
+            { name: "95%", value: "0.95" },
+            { name: "100%", value: "1" }
+          )
       )
       .addStringOption((option) =>
         option
@@ -519,6 +539,10 @@ export default {
         }
       } else if (interaction.options.getSubcommand() === "img2img") {
         const attachment = interaction.options.getAttachment("sourceimage");
+        const strength = parseFloat(
+          interaction.options.getAttachment("strength")
+        );
+
         var image = await png2webp(attachment.url);
         generation = await generateImg2img(
           prompt,
@@ -531,7 +555,8 @@ export default {
           cfg_scale,
           sampler,
           width,
-          height
+          height,
+          strength
         );
       }
 
@@ -752,10 +777,8 @@ async function sendResults(
 }
 
 async function mergeBase64(imgs: string[], width, height) {
-  console.log(width, height);
   var totalW = width * 2;
   var totalH = height * 2;
-  console.log(totalW, totalH);
 
   if (imgs.length == 1) {
     totalW = totalW / 2;
