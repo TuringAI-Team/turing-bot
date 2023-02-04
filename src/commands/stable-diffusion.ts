@@ -434,7 +434,6 @@ export default {
     const negPrompt = interaction.options.getString("negprompt");
     var m = interaction.options.getString("model");
 
-    console.log(tags);
     if (types.find((x) => x.name == t)) {
       var ts = types.find((x) => x.name == t);
       for (var i = 0; i < ts.tags.length; i++) {
@@ -442,7 +441,6 @@ export default {
         tags.push(ts.tags[i]);
       }
     }
-    console.log(tags);
     if (models.find((x) => x.name == m && x.tags != null)) {
       var model = models.find((x) => x.name == m && x.tags != null);
       for (var i = 0; i < model.tags.length; i++) {
@@ -450,7 +448,6 @@ export default {
         tags.push(model.tags[i]);
       }
     }
-    console.log(tags);
 
     prompt = `${prompt}, ${tags.join(", ")}`;
     var defaultNegPrompt = `lowres, bad anatomy, ((bad hands)), (error), ((missing fingers)), extra digit, fewer digits, awkward fingers, cropped, jpeg artifacts, worst quality, low quality, signature, blurry, extra ears, (deformed, disfigured, mutation, extra limbs:1.5),`;
@@ -497,7 +494,7 @@ export default {
           width,
           height
         );
-        console.log(generation);
+        console.log(`generatio: ${generation}`);
 
         if (generation.message) {
           if (
