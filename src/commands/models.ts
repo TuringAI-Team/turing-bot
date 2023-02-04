@@ -10,17 +10,13 @@ export default {
     new PagesBuilder(interaction)
       .setColor("#347d9c")
       .setTimestamp()
-      .setTitle("Turing Models")
+      .setDescription(`You can use this model with /stable-diffusion`)
       .setFooter({
-        text: `Thanks to [stablehorde.net](https://stablehorde.net)`,
+        text: `Thanks to https://stablehorde.net`,
       })
       .setPages(
         models.map((el, i) => {
-          return new EmbedBuilder()
-            .setDescription(
-              `${el.name}\nYou can use this model with /stable-diffusion`
-            )
-            .setImage(el.img);
+          return new EmbedBuilder().setTitle(el.name).setImage(el.img);
         })
       )
       .build();

@@ -217,15 +217,10 @@ export async function generateRateRow(generationId, userId, imageId) {
 
 export var models = [
   {
-    name: "Stable diffusion v2.0",
-    value: "stable_diffusion_2.0",
-    tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/stable_diffusion/01_racebannin.webp",
-  },
-  {
     name: "Stable diffusion",
     value: "stable_diffusion",
     tags: null,
+    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/stable_diffusion/01_racebannin.webp",
   },
   {
     name: "Microworlds",
