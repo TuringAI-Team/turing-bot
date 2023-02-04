@@ -59,7 +59,6 @@ export async function generateImg(
       height,
     },
   });
-  console.log(generation);
   return generation;
 }
 export async function generateImg2img(
@@ -101,7 +100,6 @@ export async function generateImg2img(
       height,
     },
   });
-  console.log(generation);
   return generation;
 }
 

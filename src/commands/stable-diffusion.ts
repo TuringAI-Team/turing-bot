@@ -494,7 +494,6 @@ export default {
           width,
           height
         );
-        console.log(`generatio: ${generation}`);
 
         if (generation.message) {
           if (
