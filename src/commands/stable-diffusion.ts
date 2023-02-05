@@ -543,6 +543,7 @@ export default {
         const strength = parseFloat(
           interaction.options.getAttachment("strength")
         );
+        console.log(strength);
 
         var image = await png2webp(attachment.url);
         generation = await generateImg2img(
