@@ -75,6 +75,7 @@ export async function generateImg2img(
   height,
   strength
 ) {
+  console.log(strength);
   var passFilter = await filter(prompt, model);
   if (!passFilter) {
     return {
