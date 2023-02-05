@@ -315,7 +315,12 @@ var data = new SlashCommandBuilder()
           .setName("steps")
           .setDescription("The number of steps to generate the image")
           .setRequired(true)
-          .addChoices({ name: "30", value: "30" }, { name: "50", value: "50" })
+
+          .addChoices(
+            { name: "30", value: "30" },
+            { name: "50", value: "50" },
+            { name: "100(Premium only)", value: "100" }
+          )
       )
       .addStringOption((option) =>
         option
