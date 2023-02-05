@@ -541,7 +541,6 @@ export default {
       } else if (interaction.options.getSubcommand() === "img2img") {
         const attachment = interaction.options.getAttachment("sourceimage");
         const strength = parseFloat(interaction.options.getString("strength"));
-        console.log(strength);
 
         var image = await png2webp(attachment.url);
         generation = await generateImg2img(
