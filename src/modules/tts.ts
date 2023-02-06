@@ -164,6 +164,7 @@ async function startVoiceConnection(interaction, client) {
 }
 
 async function genStream(model, text, langCode) {
+  console.log(model);
   if (model == "GoogleTTS") {
     return discordTTS.getVoiceStream(text, { lang: langCode });
   } else {
