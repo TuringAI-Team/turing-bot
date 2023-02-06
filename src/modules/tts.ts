@@ -162,6 +162,7 @@ async function startVoiceConnection(interaction, client) {
       10_000
     );
   }
+  console.log(voiceConnection);
   return voiceConnection;
 }
 
