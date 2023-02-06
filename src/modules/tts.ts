@@ -153,7 +153,7 @@ async function startVoiceConnection(interaction, client) {
       channelId: interaction.member.voice.channelId,
       guildId: interaction.guildId,
       adapterCreator: interaction.guild.voiceAdapterCreator,
-      selfDeaf: false,
+      selfDeaf: true,
       selfMute: false,
     });
     voiceConnection = await entersState(
