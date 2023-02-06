@@ -142,6 +142,7 @@ async function responseWithVoice(interaction, result, audioPlayer, model) {
 
 async function startVoiceConnection(interaction, client) {
   let voiceConnection;
+  console.log(getVoiceConnection(interaction.guildId));
   if (getVoiceConnection(interaction.guildId)) {
     voiceConnection = getVoiceConnection(interaction.guildId);
   }
@@ -162,7 +163,6 @@ async function startVoiceConnection(interaction, client) {
       5_000
     );
   }
-  console.log(voiceConnection);
   return voiceConnection;
 }
 
