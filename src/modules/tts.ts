@@ -49,6 +49,7 @@ export async function voiceAudio(interaction, client, text, model) {
   let audioPlayer = new AudioPlayer();
 
   let voiceConnection = await startVoiceConnection(interaction, client);
+  console.log("voice", voiceConnection._state.status);
 
   if (
     voiceConnection._state.status === VoiceConnectionStatus.Connecting ||
