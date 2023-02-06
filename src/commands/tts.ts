@@ -5,7 +5,7 @@ import {
 } from "discord.js";
 import supabase from "../modules/supabase.js";
 import { isPremium } from "../modules/premium.js";
-import { voiceAudio } from "src/modules/tts.js";
+import { voiceAudio } from "../modules/tts.js";
 var maintenance = false;
 
 export default {
@@ -33,6 +33,6 @@ export default {
     var message = interaction.options.getString("message");
     var model = interaction.options.getString("model");
     var ispremium = await isPremium(interaction.user.id);
-    await voiceAudio(interaction, client, message, model)
+    await voiceAudio(interaction, client, message, model);
   },
 };
