@@ -55,6 +55,7 @@ export async function voiceAudio(interaction, client, text, model) {
     voiceConnection._state.status === VoiceConnectionStatus.Ready
   ) {
     await voiceConnection.subscribe(audioPlayer);
+    console.log("voice");
     await responseWithVoice(interaction, text, audioPlayer, model);
 
     const index = client.guildsVoice.indexOf(interaction.guildId);
@@ -79,7 +80,7 @@ async function responseWithVoice(interaction, result, audioPlayer, model) {
       langCode = langObj.languages[0].code;
     }
   } catch (err) {}
-
+  console.log(langCode, charsCount);
   if (charsCount >= 200) {
     if (charsCount >= 1000) {
       interaction.reply(`Text is too long to read it`);
