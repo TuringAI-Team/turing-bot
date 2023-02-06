@@ -159,7 +159,7 @@ async function startVoiceConnection(interaction, client) {
     voiceConnection = await entersState(
       voiceConnection,
       VoiceConnectionStatus.Connecting,
-      10_000
+      5_000
     );
   }
   console.log(voiceConnection);
