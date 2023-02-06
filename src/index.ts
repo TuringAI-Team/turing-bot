@@ -10,6 +10,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 const client: any = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 client.interactions = new Collection();
+client.guildsVoice = [];
 
 // Handlers
 eventHandler(client);
