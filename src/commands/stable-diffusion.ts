@@ -483,6 +483,7 @@ export default {
     var fullPrompt = `${prompt} ### ${negPrompt}`;
 
     if (interaction.channel && interaction.channel.nsfw) nsfw = true;
+    if (!interaction.channel) nsfw = true;
 
     var width = 512;
     var height = 512;
