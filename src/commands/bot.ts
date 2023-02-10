@@ -77,7 +77,7 @@ export default {
       new ButtonBuilder()
         .setLabel("Add me")
         .setURL(
-          `https://discord.com/api/oauth2/authorize?client_id=1052474023126245447&permissions=274914986048&scope=applications.commands%20bot`
+          `https://discord.com/api/oauth2/authorize?client_id=1052474023126245447&permissions=1498980674758&scope=bot%20applications.commands`
         )
         .setStyle(ButtonStyle.Link),
       new ButtonBuilder()
