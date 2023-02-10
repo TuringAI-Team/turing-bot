@@ -419,7 +419,9 @@ export default {
    */
   async execute(interaction, client) {
     var tags = [];
-    var ispremium = await isPremium(interaction.user.id, interaction.guild.id);
+    var guildId;
+    if (interaction.guild) guildId = interaction.guild.id;
+    var ispremium = await isPremium(interaction.user.id, guildId);
     if (
       interaction.channel &&
       interaction.channel.id != "1049275551568896000" &&

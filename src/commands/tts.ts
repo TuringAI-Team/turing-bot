@@ -32,7 +32,9 @@ export default {
   async execute(interaction, client, commands, commandType, options) {
     var message = interaction.options.getString("message");
     var model = interaction.options.getString("model");
-    var ispremium = await isPremium(interaction.user.id, interaction.guild.id);
+    var guildId;
+    if (interaction.guild) guildId = interaction.guild.id;
+    var ispremium = await isPremium(interaction.user.id, guildId);
     await voiceAudio(interaction, client, message, model);
   },
 };
