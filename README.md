@@ -56,7 +56,6 @@ AIs included:
 
 - [x] Dall-e 2
 - [x] Stable diffusion
-- [ ] FakeYou
 - [ ] Whisper
-- [ ] NeRF
-- [ ] DeepFakes AI
+- [ ] GoogleTTS
+- [ ] Elevenlabs
