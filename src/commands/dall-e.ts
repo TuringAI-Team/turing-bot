@@ -41,7 +41,7 @@ export default {
     let { data: accounts, error } = await supabase
       .from("accounts")
       .select("*")
-      .neq("key", null);
+      .neq("key", null).eq('abled', true);
 
     if (!accounts) {
       await interaction.editReply({
