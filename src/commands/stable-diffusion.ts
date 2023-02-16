@@ -527,7 +527,7 @@ export default {
         if (generation.message) {
           if (
             generation.message.includes(
-              "This prompt appears to violate our terms of service and will be reported"
+              "This prompt appears to violate our terms of service and will be reported. Please contact us if you think this is an error."
             )
           ) {
             const channel = client.channels.cache.get("1051425293715390484");
