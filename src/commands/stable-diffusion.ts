@@ -530,11 +530,7 @@ export default {
               "This prompt appears to violate our terms of service and will be reported. Please contact us if you think this is an error."
             )
           ) {
-            const channel = client.channels.cache.get("1051425293715390484");
-            await interaction.reply({
-              content: `Sending...`,
-              ephemeral: true,
-            });
+            const channel = client.channels.cache.get("1055943633716641853");
             channel.send(
               `**Wrong prompt from __${interaction.user.tag}__** (${interaction.user.id})\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}`
             );
