@@ -594,7 +594,7 @@ export default {
             );
           } else {
             if (status.wait_time == undefined) {
-              console.log("No wait time");
+              console.log("No wait time", status);
               clearInterval(interval);
               await interaction.editReply({
                 content: `Something wrong happen.`,
