@@ -5,6 +5,7 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  PermissionsBitField,
   StringSelectMenuBuilder,
 } from "discord.js";
 import "dotenv/config";
@@ -67,6 +68,16 @@ export default {
       }
       var r;
       if (type == "server") {
+        if (
+          !interaction.member.permissions.has(
+            PermissionsBitField.Flags.Administrator
+          )
+        ) {
+          await interaction.reply({
+            content: `You need to be an administrator to activate a server key.`,
+            ephemeral: true,
+          });
+        }
         r = await activateKey(key, interaction.guild.id, type);
       } else {
         r = await activateKey(key, interaction.user.id, type);
