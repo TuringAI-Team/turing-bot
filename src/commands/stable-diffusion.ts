@@ -624,7 +624,7 @@ export default {
             ephemeral: true,
           });
         }
-      }, 10000);
+      }, 12000);
     } catch (e) {
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
