@@ -21,9 +21,8 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "resolveJsonModule": true
+    "noFallthroughCasesInSwitch": false
   },
-  "include": ["src"],
+  "include": ["src", "tts.ts"],
   "exclude": ["node_modules", "dist"]
 }

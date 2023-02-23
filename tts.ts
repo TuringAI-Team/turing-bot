@@ -3,9 +3,9 @@ import {
   EmbedBuilder,
   AttachmentBuilder,
 } from "discord.js";
-import supabase from "../modules/supabase.js";
-import { isPremium } from "../modules/premium.js";
-import { voiceAudio } from "../modules/tts.js";
+import supabase from "./src/modules/supabase.js";
+import { isPremium } from "./src/modules/premium.js";
+import { voiceAudio } from "./src/modules/tts.js";
 var maintenance = false;
 
 export default {
