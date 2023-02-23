@@ -12,6 +12,7 @@ import sharp from "sharp";
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
 import axios from "axios";
+import underageCelebs from "./all_name_regex.json";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_KEY,
@@ -158,6 +159,10 @@ async function filter(prompt, model?) {
   if (nsfwModels.find((x) => x == model)) isNsfw = true;
   if (nsfwWords.some((v) => prompt.toLowerCase().includes(v))) isNsfw = true;
   if (youngWords.some((v) => prompt.toLowerCase().includes(v))) isYoung = true;
+  if (
+    underageCelebs.some((v) => prompt.toLowerCase().includes(v.toLowerCase()))
+  )
+    isYoung = true;
   if (!isYoung) {
     var result = await openai.createModeration({
       input: prompt,
