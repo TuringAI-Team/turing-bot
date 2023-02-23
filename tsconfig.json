@@ -23,6 +23,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src", "tts.ts"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
