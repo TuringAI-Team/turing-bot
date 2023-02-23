@@ -439,7 +439,17 @@ export default {
     var cfg_scale = parseInt(interaction.options.getString("cfg_scale"));
     var sampler = interaction.options.getString("sampler");
     var size = interaction.options.getString("size");
-
+    var userBans = await supabase
+      .from("bans")
+      .select("*")
+      .eq("id", interaction.user.id);
+    if (userBans.data[0].banned) {
+      interaction.reply({
+        content: `You are banned from using this utility`,
+        ephemeral: true,
+      });
+      return;
+    }
     if (s != 30 && s != 50 && s != 100 && s != 150) {
       await interaction.reply({
         content: `Invalid request`,
@@ -523,25 +533,6 @@ export default {
           width,
           height
         );
-
-        if (generation.message) {
-          if (
-            generation.message.includes(
-              "This prompt appears to violate our terms of service and will be reported. Please contact us if you think this is an error."
-            )
-          ) {
-            const channel = client.channels.cache.get("1055943633716641853");
-            channel.send(
-              `**Wrong prompt from __${interaction.user.tag}__** (${interaction.user.id})\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}`
-            );
-          }
-
-          await interaction.editReply({
-            content: `Something wrong happen:\n${generation.message}`,
-            ephemeral: true,
-          });
-          return;
-        }
       } else if (interaction.options.getSubcommand() === "img2img") {
         const attachment = interaction.options.getAttachment("sourceimage");
         const strength = parseFloat(interaction.options.getString("strength"));
@@ -561,6 +552,54 @@ export default {
           height,
           strength
         );
+      }
+      if (generation.message) {
+        if (
+          generation.message.includes(
+            "To prevent generation of unethical images, we cannot allow this prompt with NSFW models. Please select another model and try again."
+          )
+        ) {
+          const channel = client.channels.cache.get("1055943633716641853");
+          channel.send(
+            `**Wrong prompt from __${interaction.user.tag}__** (${interaction.user.id})\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}`
+          );
+          if (!userBans.data[0]) {
+            await supabase.from("bans").insert([
+              {
+                id: interaction.user.id,
+                tries: 1,
+                banned: false,
+                prompts: [
+                  { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+                ],
+              },
+            ]);
+          } else {
+            if (userBans.data[0].tries >= 3) {
+              await supabase
+                .from("bans")
+                .update({ banned: true })
+                .eq("id", interaction.user.id);
+            } else {
+              await supabase
+                .from("bans")
+                .update({
+                  tries: userBans.data[0].tries + 1,
+                  prompts: [
+                    ...userBans.data[0].prompts,
+                    { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+                  ],
+                })
+                .eq("id", interaction.user.id);
+            }
+          }
+        }
+
+        await interaction.editReply({
+          content: `Something wrong happen:\n${generation.message}`,
+          ephemeral: true,
+        });
+        return;
       }
 
       var interval = setInterval(async () => {
