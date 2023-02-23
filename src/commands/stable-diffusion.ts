@@ -443,7 +443,7 @@ export default {
       .from("bans")
       .select("*")
       .eq("id", interaction.user.id);
-    if (userBans.data[0].banned) {
+    if (userBans.data[0] && userBans.data[0].banned) {
       interaction.reply({
         content: `You are banned from using this utility`,
         ephemeral: true,
