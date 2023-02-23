@@ -12,7 +12,7 @@ import sharp from "sharp";
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
 import axios from "axios";
-import underageCelebs from "./all_name_regex.json";
+import underageCelebs from "./all_name_regex.json" assert { type: "json" };
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_KEY,
