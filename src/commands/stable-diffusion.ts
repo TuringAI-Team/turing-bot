@@ -571,7 +571,7 @@ export default {
               },
             ]);
           } else {
-            if (userBans.data[0].tries >= 3) {
+            if (userBans.data[0].tries >= 2) {
               await supabase
                 .from("bans")
                 .update({ banned: true })
