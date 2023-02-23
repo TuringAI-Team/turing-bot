@@ -554,11 +554,7 @@ export default {
         );
       }
       if (generation.message) {
-        if (
-          generation.message.includes(
-            "To prevent generation of unethical images, we cannot allow this prompt with NSFW models. Please select another model and try again."
-          )
-        ) {
+        if (generation.message.toLowerCase().includes("msfw")) {
           const channel = client.channels.cache.get("1055943633716641853");
           channel.send(
             `**Wrong prompt from __${interaction.user.tag}__** (${interaction.user.id})\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}`
