@@ -41,6 +41,7 @@ export async function generateImg(
     return {
       message:
         "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
+      filter: true,
     };
   }
 
@@ -81,6 +82,7 @@ export async function generateImg2img(
     return {
       message:
         "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
+      filter: true,
     };
   }
 
@@ -148,17 +150,18 @@ async function filter(prompt, model?) {
     "toddler",
     "baby",
     "prepubescent",
+    "short",
     "minor-aged",
-    "jenna ortega",
-    "hermione",
   ];
   var nsfwModels = ["Hentai Diffusion"];
   var nsfwWords = ["naked", "nude", "uncensored"];
   var isNsfw = false;
   var isYoung = false;
   if (nsfwModels.find((x) => x == model)) isNsfw = true;
-  if (nsfwWords.some((v) => prompt.toLowerCase().includes(v))) isNsfw = true;
-  if (youngWords.some((v) => prompt.toLowerCase().includes(v))) isYoung = true;
+  if (nsfwWords.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
+    isNsfw = true;
+  if (youngWords.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
+    isYoung = true;
   if (underagedCebs.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
     isYoung = true;
   if (!isYoung) {
@@ -236,12 +239,7 @@ export var models = [
     value: "Anything Diffusion",
     img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/anything_diffusion/01.webp",
   },
-  {
-    name: "Midjourney Diffusion",
-    value: "Midjourney Diffusion",
-    tags: ["mdjrny-v4 style"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/midjourney_diffusion/01_bigdowg.webp",
-  },
+
   {
     name: "Dreamshaper",
     value: "Dreamshaper",
@@ -269,7 +267,7 @@ export var models = [
   {
     name: "Hentai Diffusion",
     value: "Hentai Diffusion",
-    tags: ["1girl", "anime"],
+    tags: ["anime"],
     img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/hentai_diffusion/01_bigdowg.webp",
   },
   {

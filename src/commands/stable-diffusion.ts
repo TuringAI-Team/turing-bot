@@ -49,7 +49,6 @@ var data = new SlashCommandBuilder()
             },
             { name: "Microworlds", value: "Microworlds" },
             { name: "Anything Diffusion", value: "Anything Diffusion" },
-            { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
             { name: "Dreamshaper", value: "Dreamshaper" },
             {
               name: "Dreamlike Photoreal",
@@ -233,7 +232,6 @@ var data = new SlashCommandBuilder()
             },
             { name: "Microworlds", value: "Microworlds" },
             { name: "Anything Diffusion", value: "Anything Diffusion" },
-            { name: "Midjourney Diffusion", value: "Midjourney Diffusion" },
             { name: "Dreamshaper", value: "Dreamshaper" },
             {
               name: "Dreamlike Photoreal",
@@ -445,7 +443,7 @@ export default {
       .eq("id", interaction.user.id);
     if (userBans.data[0] && userBans.data[0].banned) {
       interaction.reply({
-        content: `You are banned from using this utility`,
+        content: `You are banned from using this utility, If you think this is an error please contact [the support server](https://dsc.gg/tureing) .`,
         ephemeral: true,
       });
       return;
@@ -557,7 +555,11 @@ export default {
         if (generation.message.toLowerCase().includes("nsfw")) {
           const channel = client.channels.cache.get("1055943633716641853");
           channel.send(
-            `**Wrong prompt from __${interaction.user.tag}__** (${interaction.user.id})\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}`
+            `**Wrong prompt from __${interaction.user.tag}__** (${
+              interaction.user.id
+            })\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}\nTuring filter: ${
+              generation.filter ? "yes" : "no"
+            }`
           );
           if (!userBans.data[0]) {
             await supabase.from("bans").insert([
@@ -574,7 +576,14 @@ export default {
             if (userBans.data[0].tries >= 2) {
               await supabase
                 .from("bans")
-                .update({ banned: true })
+                .update({
+                  banned: true,
+                  tries: userBans.data[0].tries + 1,
+                  prompts: [
+                    ...userBans.data[0].prompts,
+                    { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+                  ],
+                })
                 .eq("id", interaction.user.id);
             } else {
               await supabase
