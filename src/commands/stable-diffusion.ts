@@ -557,7 +557,7 @@ export default {
           channel.send(
             `**Wrong prompt from __${interaction.user.tag}__** (${
               interaction.user.id
-            })\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}\nTuring filter: ${
+            })\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}\n**Turing filter:** ${
               generation.filter ? "yes" : "no"
             }`
           );

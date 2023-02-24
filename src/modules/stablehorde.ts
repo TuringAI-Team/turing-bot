@@ -150,7 +150,7 @@ async function filter(prompt, model?) {
     "toddler",
     "baby",
     "prepubescent",
-    "short",
+    "short,",
     "minor-aged",
   ];
   var nsfwModels = ["Hentai Diffusion"];
