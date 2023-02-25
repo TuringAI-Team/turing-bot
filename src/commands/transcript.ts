@@ -84,33 +84,25 @@ export default {
     if (translate == "false") translate = false;
 
     await interaction.deferReply();
+    var url;
     if (interaction.options.getSubcommand() === "url") {
-      var url = interaction.options.getString("url");
-
-      var result = await getTranscription(url, model);
-      if (typeof result === "object" && result.error) {
-        await interaction.editReply({
-          content: `Something wrong happned:\n${result.error}`,
-          ephemeral: true,
-        });
-        return;
-      }
-      if (result) {
-        await interaction.editReply(`**Transcription:** ${result}`);
-      }
+      url = interaction.options.getString("url");
     } else if (interaction.options.getSubcommand() === "file") {
-      var file = interaction.options.getAttachment("file");
-      var result = await getTranscription(file.url, model);
-      if (typeof result === "object" && result.error) {
-        await interaction.editReply({
-          content: `Something wrong happned:\n${result.error}`,
-          ephemeral: true,
-        });
-        return;
-      }
-      if (result) {
-        await interaction.editReply(`**Transcription:** ${result}`);
-      }
+      url = interaction.options.getAttachment("file").url;
+    }
+    var result = await getTranscription(url, model);
+
+    if (typeof result === "object" && result.error) {
+      await interaction.editReply({
+        content: `Something wrong happned:\n${result.error}`,
+        ephemeral: true,
+      });
+      return;
+    }
+    if (result && typeof result == "string") {
+      if (result.split("").length > 2000)
+        await sendLongText(result, interaction);
+      await interaction.editReply(`**Transcription:** ${result}`);
     }
   },
 };
@@ -145,5 +137,13 @@ async function getTranscription(fileUrl, model) {
     return transcription;
   } catch (err) {
     return { error: err };
+  }
+}
+// send longer text in discord messages, split them in different messages of less than 2000 characteres each replying the message before it
+async function sendLongText(text, interaction) {
+  var textArray = text.match(/.{1,2000}/g);
+  var lastMessage = interaction;
+  for (var i = 0; i < textArray.length; i++) {
+    lastMessage = await lastMessage.reply(textArray[i]);
   }
 }
