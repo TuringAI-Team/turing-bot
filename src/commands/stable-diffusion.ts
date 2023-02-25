@@ -588,51 +588,16 @@ export default {
           generation.message.includes("unethical image") ||
           generation.message.includes("violate")
         ) {
-          const channel = client.channels.cache.get("1055943633716641853");
-          channel.send(
-            `**Wrong prompt from __${interaction.user.tag}__** (${
-              interaction.user.id
-            })\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}\n**Turing filter:** ${
-              generation.filter ? "yes" : "no"
-            }`
+          await banUser(
+            client,
+            interaction,
+            userBans,
+            generation,
+            prompt,
+            m,
+            nsfw
           );
-          if (!userBans.data[0]) {
-            await supabase.from("bans").insert([
-              {
-                id: interaction.user.id,
-                tries: 1,
-                banned: false,
-                prompts: [
-                  { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
-                ],
-              },
-            ]);
-          } else {
-            if (userBans.data[0].tries >= 2) {
-              await supabase
-                .from("bans")
-                .update({
-                  banned: true,
-                  tries: userBans.data[0].tries + 1,
-                  prompts: [
-                    ...userBans.data[0].prompts,
-                    { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
-                  ],
-                })
-                .eq("id", interaction.user.id);
-            } else {
-              await supabase
-                .from("bans")
-                .update({
-                  tries: userBans.data[0].tries + 1,
-                  prompts: [
-                    ...userBans.data[0].prompts,
-                    { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
-                  ],
-                })
-                .eq("id", interaction.user.id);
-            }
-          }
+          return;
         }
 
         await interaction.editReply({
@@ -705,57 +670,24 @@ export default {
         }
       }, 15000);
     } catch (e) {
-      if (
-        generation.message.toLowerCase().includes("nsfw") ||
-        generation.message.includes("unethical image") ||
-        generation.message.includes("violate")
-      ) {
-        const channel = client.channels.cache.get("1055943633716641853");
-        channel.send(
-          `**Wrong prompt from __${interaction.user.tag}__** (${
-            interaction.user.id
-          })\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}\n**Turing filter:** ${
-            generation.filter ? "yes" : "no"
-          }`
-        );
-        if (!userBans.data[0]) {
-          await supabase.from("bans").insert([
-            {
-              id: interaction.user.id,
-              tries: 1,
-              banned: false,
-              prompts: [
-                { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
-              ],
-            },
-          ]);
-        } else {
-          if (userBans.data[0].tries >= 2) {
-            await supabase
-              .from("bans")
-              .update({
-                banned: true,
-                tries: userBans.data[0].tries + 1,
-                prompts: [
-                  ...userBans.data[0].prompts,
-                  { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
-                ],
-              })
-              .eq("id", interaction.user.id);
-          } else {
-            await supabase
-              .from("bans")
-              .update({
-                tries: userBans.data[0].tries + 1,
-                prompts: [
-                  ...userBans.data[0].prompts,
-                  { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
-                ],
-              })
-              .eq("id", interaction.user.id);
-          }
+      if (typeof e == "string") {
+        if (
+          e.toLowerCase().includes("nsfw") ||
+          e.includes("unethical image") ||
+          e.includes("violate")
+        ) {
+          await banUser(
+            client,
+            interaction,
+            userBans,
+            generation,
+            prompt,
+            m,
+            nsfw
+          );
         }
       }
+
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,
@@ -958,4 +890,58 @@ async function mergeBase64(imgs: string[], width, height) {
 }
 function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+async function banUser(
+  client,
+  interaction,
+  userBans,
+  generation,
+  prompt,
+  m,
+  nsfw
+) {
+  const channel = client.channels.cache.get("1055943633716641853");
+  channel.send(
+    `**Wrong prompt from __${interaction.user.tag}__** (${
+      interaction.user.id
+    })\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}\n**Turing filter:** ${
+      generation.filter ? "yes" : "no"
+    }`
+  );
+  if (!userBans.data[0]) {
+    await supabase.from("bans").insert([
+      {
+        id: interaction.user.id,
+        tries: 1,
+        banned: false,
+        prompts: [{ prompt: prompt, model: m, nsfw: nsfw, date: new Date() }],
+      },
+    ]);
+  } else {
+    if (userBans.data[0].tries >= 2) {
+      await supabase
+        .from("bans")
+        .update({
+          banned: true,
+          tries: userBans.data[0].tries + 1,
+          prompts: [
+            ...userBans.data[0].prompts,
+            { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+          ],
+        })
+        .eq("id", interaction.user.id);
+    } else {
+      await supabase
+        .from("bans")
+        .update({
+          tries: userBans.data[0].tries + 1,
+          prompts: [
+            ...userBans.data[0].prompts,
+            { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+          ],
+        })
+        .eq("id", interaction.user.id);
+    }
+  }
 }
