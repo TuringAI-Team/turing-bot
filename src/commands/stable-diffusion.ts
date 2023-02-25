@@ -576,7 +576,10 @@ export default {
         );
       }
       if (generation.message) {
-        if (generation.message.toLowerCase().includes("nsfw")) {
+        if (
+          generation.message.toLowerCase().includes("nsfw") ||
+          generation.message.includes("unethical image")
+        ) {
           const channel = client.channels.cache.get("1055943633716641853");
           channel.send(
             `**Wrong prompt from __${interaction.user.tag}__** (${
