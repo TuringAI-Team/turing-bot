@@ -145,6 +145,7 @@ export default {
     } else if (interaction.options.getSubcommand() === "file") {
       url = interaction.options.getAttachment("file").url;
     }
+    await interaction.editReply("Generating transcript...");
     var result = await getTranscription(url, model, output);
 
     if (typeof result === "object" && result.error) {
