@@ -160,7 +160,7 @@ async function filter(prompt, model?) {
     "short,",
     "minor-aged",
   ];
-  var nsfwModels = ["Hentai Diffusion"];
+  var nsfwModels = [];
   var nsfwWords = ["naked", "nude", "uncensored"];
   var isNsfw = false;
   var isYoung = false;
