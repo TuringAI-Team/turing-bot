@@ -514,14 +514,12 @@ export default {
     if (types.find((x) => x.name == t)) {
       var ts = types.find((x) => x.name == t);
       for (var i = 0; i < ts.tags.length; i++) {
-        console.log(i, ts.tags[i]);
         tags.push(ts.tags[i]);
       }
     }
     if (models.find((x) => x.name == m && x.tags != null)) {
       var model = models.find((x) => x.name == m && x.tags != null);
       for (var i = 0; i < model.tags.length; i++) {
-        console.log(i, model.tags[i]);
         tags.push(model.tags[i]);
       }
     }
