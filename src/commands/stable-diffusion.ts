@@ -670,6 +670,7 @@ export default {
         }
       }, 15000);
     } catch (e) {
+      console.log(e);
       if (typeof e == "string") {
         if (
           e.toLowerCase().includes("nsfw") ||
