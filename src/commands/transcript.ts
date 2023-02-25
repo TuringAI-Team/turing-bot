@@ -44,6 +44,31 @@ var data = new SlashCommandBuilder()
             }
           )
       )
+      // output option list
+      .addStringOption((option) =>
+        option
+          .setName("output")
+          .setDescription("The output of the command")
+          .setRequired(true)
+          .addChoices(
+            {
+              name: "Text",
+              value: "text",
+            },
+            {
+              name: "Text file",
+              value: "textfile",
+            },
+            {
+              name: "Speaker + text",
+              value: "speaker",
+            },
+            {
+              name: "Srt file",
+              value: "srt",
+            }
+          )
+      )
   )
   .addSubcommand((subcommand) =>
     subcommand
@@ -71,6 +96,30 @@ var data = new SlashCommandBuilder()
             }
           )
       )
+      .addStringOption((option) =>
+        option
+          .setName("output")
+          .setDescription("The output of the command")
+          .setRequired(true)
+          .addChoices(
+            {
+              name: "Text",
+              value: "text",
+            },
+            {
+              name: "Text file",
+              value: "textfile",
+            },
+            {
+              name: "Speaker + text",
+              value: "speaker",
+            },
+            {
+              name: "Srt file",
+              value: "srt",
+            }
+          )
+      )
   );
 export default {
   cooldown: "2m",
@@ -79,9 +128,7 @@ export default {
    */
   async execute(interaction, client) {
     var model = interaction.options.getString("model");
-    var translate = interaction.options.getString("translate");
-    if (translate == "true") translate = true;
-    if (translate == "false") translate = false;
+    var output = interaction.options.getString("output");
 
     await interaction.deferReply();
     var url;
@@ -90,7 +137,7 @@ export default {
     } else if (interaction.options.getSubcommand() === "file") {
       url = interaction.options.getAttachment("file").url;
     }
-    var result = await getTranscription(url, model);
+    var result = await getTranscription(url, model, output);
 
     if (typeof result === "object" && result.error) {
       await interaction.editReply({
@@ -100,14 +147,25 @@ export default {
       return;
     }
     if (result && typeof result == "string") {
-      if (result.split("").length > 2000)
-        await sendLongText(result, interaction);
-      await interaction.editReply(`**Transcription:** ${result}`);
+      if (output === "textfile") {
+        var file = new AttachmentBuilder(Buffer.from(result), {
+          name: "transcript.txt",
+        });
+        await interaction.editReply({
+          content: "Here is your transcript",
+          files: [file],
+        });
+      } else if (output == "speaker") {
+      } else if (output == "text") {
+        if (result.split("").length > 2000)
+          await sendLongText(result, interaction);
+        else await interaction.editReply(`**Transcription:** ${result}`);
+      }
     }
   },
 };
 
-async function getTranscription(fileUrl, model) {
+async function getTranscription(fileUrl, model, output) {
   try {
     const form = new FormData();
     form.append("audio_url", fileUrl);
@@ -118,7 +176,7 @@ async function getTranscription(fileUrl, model) {
       form,
       {
         params: {
-          model: "large-v2",
+          model: model,
         },
         headers: {
           ...form.getHeaders(),
@@ -130,10 +188,25 @@ async function getTranscription(fileUrl, model) {
     );
     var res = response.data;
     var transcription = "";
-    for (var i = 0; i < res.prediction.length; i++) {
-      var tr = res.prediction[i];
-      transcription += `${tr.transcription} `;
+    if (output == "text" || output == "textfile") {
+      for (var i = 0; i < res.prediction.length; i++) {
+        var tr = res.prediction[i];
+        transcription += `${tr.transcription} `;
+      }
+    } else if (output == "speaker") {
+      for (var i = 0; i < res.prediction.length; i++) {
+        var tr = res.prediction[i];
+        transcription += `${tr.speaker}: ${tr.transcription}\n`;
+      }
+    } else if (output == "srt") {
+      for (var i = 0; i < res.prediction.length; i++) {
+        var tr = res.prediction[i];
+        transcription += `${i + 1}\n${tr.start_time} --> ${tr.end_time}\n${
+          tr.transcription
+        }\n\n`;
+      }
     }
+
     return transcription;
   } catch (err) {
     return { error: err };
@@ -145,7 +218,9 @@ async function sendLongText(text, interaction) {
   var lastMessage = interaction;
   for (var i = 0; i < textArray.length; i++) {
     if (lastMessage == interaction)
-      lastMessage = await interaction.editReply(textArray[i]);
+      lastMessage = await interaction.editReply(
+        `**Transcription:** ${textArray[i]}`
+      );
     else lastMessage = await lastMessage.reply(textArray[i]);
   }
 }

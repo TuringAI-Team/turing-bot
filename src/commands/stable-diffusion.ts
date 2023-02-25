@@ -112,6 +112,10 @@ var data = new SlashCommandBuilder()
               value: "Anything Diffusion",
             },
             {
+              name: "Abyss OrangeMix",
+              value: "Abyss OrangeMix",
+            },
+            {
               name: "vectorartz",
               value: "vectorartz",
             },
@@ -292,6 +296,10 @@ var data = new SlashCommandBuilder()
             {
               name: "Anything v3",
               value: "Anything v3",
+            },
+            {
+              name: "Abyss OrangeMix",
+              value: "Abyss OrangeMix",
             },
             {
               name: "vectorartz",
