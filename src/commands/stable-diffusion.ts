@@ -586,9 +586,7 @@ export default {
         if (
           generation.message.toLowerCase().includes("nsfw") ||
           generation.message.includes("unethical image") ||
-          generation.message.includes("violate") ||
-          generation.message ==
-            "This prompt appears to violate our terms of service and will be reported. Please contact us if you think this is an error."
+          generation.message.includes("violate")
         ) {
           const channel = client.channels.cache.get("1055943633716641853");
           channel.send(
@@ -707,6 +705,57 @@ export default {
         }
       }, 15000);
     } catch (e) {
+      if (
+        generation.message.toLowerCase().includes("nsfw") ||
+        generation.message.includes("unethical image") ||
+        generation.message.includes("violate")
+      ) {
+        const channel = client.channels.cache.get("1055943633716641853");
+        channel.send(
+          `**Wrong prompt from __${interaction.user.tag}__** (${
+            interaction.user.id
+          })\n**Prompt:** ${prompt}\n**Model:** ${m}\n**NSFW:** ${nsfw}\n**Turing filter:** ${
+            generation.filter ? "yes" : "no"
+          }`
+        );
+        if (!userBans.data[0]) {
+          await supabase.from("bans").insert([
+            {
+              id: interaction.user.id,
+              tries: 1,
+              banned: false,
+              prompts: [
+                { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+              ],
+            },
+          ]);
+        } else {
+          if (userBans.data[0].tries >= 2) {
+            await supabase
+              .from("bans")
+              .update({
+                banned: true,
+                tries: userBans.data[0].tries + 1,
+                prompts: [
+                  ...userBans.data[0].prompts,
+                  { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+                ],
+              })
+              .eq("id", interaction.user.id);
+          } else {
+            await supabase
+              .from("bans")
+              .update({
+                tries: userBans.data[0].tries + 1,
+                prompts: [
+                  ...userBans.data[0].prompts,
+                  { prompt: prompt, model: m, nsfw: nsfw, date: new Date() },
+                ],
+              })
+              .eq("id", interaction.user.id);
+          }
+        }
+      }
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
         ephemeral: true,
