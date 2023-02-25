@@ -23,6 +23,7 @@ import { createCanvas, loadImage, Image } from "canvas";
 import sharp from "sharp";
 import { generateRateRow, generateUpscaleRow } from "../modules/stablehorde.js";
 import StableHorde from "@zeldafan0225/stable_horde";
+import { PagesBuilder } from "discord.js-pages";
 
 var data = new SlashCommandBuilder()
   .setName("stable-diffusion")
@@ -409,6 +410,9 @@ var data = new SlashCommandBuilder()
             { name: "512x768(Premium only)", value: "512x768" }
           )
       )
+  )
+  .addSubcommand((subcommand) =>
+    subcommand.setName("models").setDescription("Get the list of models")
   );
 export default {
   cooldown: "2m",
@@ -430,6 +434,26 @@ export default {
         content: `For use this utility go to <#1049275551568896000>`,
         ephemeral: true,
       });
+      return;
+    }
+    // models subcommand
+    if (interaction.options.getSubcommand() == "models") {
+      new PagesBuilder(interaction)
+        .setColor("#347d9c")
+        .setTimestamp()
+        .setDescription(
+          `You can use this model with /stable-diffusion text2img`
+        )
+        .setFooter({
+          text: `Thanks to https://stablehorde.net`,
+        })
+        .setPages(
+          models.map((el, i) => {
+            return new EmbedBuilder().setTitle(el.name).setImage(el.img);
+          })
+        )
+        .build();
+
       return;
     }
     var s = parseInt(interaction.options.getString("steps"));
