@@ -19,7 +19,7 @@ import {
   png2webp,
 } from "../modules/stablehorde.js";
 import { isPremium } from "../modules/premium.js";
-import { createCanvas, loadImage, Image } from "canvas";
+//import { createCanvas, loadImage, Image } from "canvas";
 import sharp from "sharp";
 import { generateRateRow, generateUpscaleRow } from "../modules/stablehorde.js";
 import StableHorde from "@zeldafan0225/stable_horde";
@@ -584,9 +584,11 @@ export default {
       }
       if (generation.message) {
         if (
-          generation.message.toLowerCase().includes("nsfw") ||
+          generation.message ==
+            `This prompt appears to violate our terms of service and will be reported. Please contact us if you think this is an error.` ||
           generation.message.includes("unethical image") ||
-          generation.message.includes("violate")
+          generation.message.includes("violate") ||
+          generation.message.includes("nsfw")
         ) {
           await banUser(
             client,
@@ -597,7 +599,6 @@ export default {
             m,
             nsfw
           );
-          return;
         }
 
         await interaction.editReply({
@@ -669,24 +670,18 @@ export default {
           });
         }
       }, 15000);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
-      if (typeof e == "string") {
-        if (
-          e.toLowerCase().includes("nsfw") ||
-          e.includes("unethical image") ||
-          e.includes("violate")
-        ) {
-          await banUser(
-            client,
-            interaction,
-            userBans,
-            generation,
-            prompt,
-            m,
-            nsfw
-          );
-        }
+      if (e.includes("unethical image") || e.includes("violate")) {
+        await banUser(
+          client,
+          interaction,
+          userBans,
+          generation,
+          prompt,
+          m,
+          nsfw
+        );
       }
 
       await interaction.editReply({
@@ -759,7 +754,7 @@ async function sendResults(
         inline: true,
       }
     );
-
+  return;
   var row = await generateRateRow(id, userId, images[0].id);
   if (imagesArr.length > 1) {
     row = await generateUpscaleRow(id, images);
@@ -768,8 +763,8 @@ async function sendResults(
     const sfbuff = Buffer.from(g.img, "base64");
     return sfbuff;
   });
-
-  let base64: any = await mergeBase64(imgs, width / 2, height / 2);
+  let base64;
+  //  let base64: any = await mergeBase64(imgs, width / 2, height / 2);
   base64 = base64.split("base64,")[1];
   var sfbuff = Buffer.from(base64, "base64");
   var resfile = new AttachmentBuilder(sfbuff, { name: "output.png" });
@@ -781,67 +776,8 @@ async function sendResults(
     content: `${interaction.user}`,
     embeds: [embed],
   });
-  /*
-  if (imagesArr.length > 1) {
-    for (var j = 1; j < imagesArr.length; j++) {
-      const row2 = new ActionRowBuilder();
-      var img = imagesArr[j];
-      var menu2 = new StringSelectMenuBuilder()
-        .setCustomId(`rate_${id}_${images[j].id}_${userId}`)
-        .setMinValues(1)
-        .setMaxValues(1)
-        .setOptions(
-          {
-            value: "1",
-            label: "1/10",
-          },
-          {
-            value: "2",
-            label: "2/10",
-          },
-          {
-            value: "3",
-            label: "3/10",
-          },
-          {
-            value: "4",
-            label: "4/10",
-          },
-          {
-            value: "5",
-            label: "5/10",
-          },
-          {
-            value: "6",
-            label: "6/10",
-          },
-          {
-            value: "7",
-            label: "7/10",
-          },
-          {
-            value: "8",
-            label: "8/10",
-          },
-          {
-            value: "9",
-            label: "9/10",
-          },
-          {
-            value: "10",
-            label: "10/10",
-          }
-        )
-        .setPlaceholder(`Rate the result(${j + 1}) with a number from 1 to 10`);
-      row2.addComponents(menu2);
-      reply = await reply.reply({
-        files: [img],
-        components: [row2],
-      });
-    }
-  }*/
 }
-
+/*
 async function mergeBase64(imgs: string[], width, height) {
   var totalW = width * 2;
   var totalH = height * 2;
@@ -888,7 +824,7 @@ async function mergeBase64(imgs: string[], width, height) {
 
   const dataURL = canvas.toDataURL();
   return dataURL;
-}
+}*/
 function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

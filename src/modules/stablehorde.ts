@@ -44,24 +44,27 @@ export async function generateImg(
       filter: true,
     };
   }
-
-  const generation = await stable_horde.postAsyncGenerate({
-    prompt: prompt,
-    nsfw: nsfw,
-    censor_nsfw: nsfw == true ? false : true,
-    r2: false,
-    shared: true,
-    models: [model],
-    params: {
-      n: amount,
-      steps: steps,
-      cfg_scale,
-      sampler_name: sampler,
-      width,
-      height,
-    },
-  });
-  return generation;
+  try {
+    const generation = await stable_horde.postAsyncGenerate({
+      prompt: prompt,
+      nsfw: nsfw,
+      censor_nsfw: nsfw == true ? false : true,
+      r2: false,
+      shared: true,
+      models: [model],
+      params: {
+        n: amount,
+        steps: steps,
+        cfg_scale,
+        sampler_name: sampler,
+        width,
+        height,
+      },
+    });
+    return generation;
+  } catch (e) {
+    return { message: e };
+  }
 }
 export async function generateImg2img(
   prompt: string,
@@ -86,26 +89,30 @@ export async function generateImg2img(
     };
   }
 
-  const generation = await stable_horde.postAsyncGenerate({
-    prompt: prompt,
-    nsfw: nsfw,
-    censor_nsfw: nsfw == true ? false : true,
-    r2: false,
-    shared: true,
-    models: [model],
-    source_image,
-    source_processing,
-    params: {
-      n: amount,
-      steps: steps,
-      cfg_scale,
-      sampler_name: sampler,
-      width,
-      height,
-      denoising_strength: strength,
-    },
-  });
-  return generation;
+  try {
+    const generation = await stable_horde.postAsyncGenerate({
+      prompt: prompt,
+      nsfw: nsfw,
+      censor_nsfw: nsfw == true ? false : true,
+      r2: false,
+      shared: true,
+      models: [model],
+      source_image,
+      source_processing,
+      params: {
+        n: amount,
+        steps: steps,
+        cfg_scale,
+        sampler_name: sampler,
+        width,
+        height,
+        denoising_strength: strength,
+      },
+    });
+    return generation;
+  } catch (e) {
+    return { message: e };
+  }
 }
 
 export async function png2webp(pngUrl) {
@@ -162,8 +169,8 @@ async function filter(prompt, model?) {
     isNsfw = true;
   if (youngWords.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
     isYoung = true;
-  //if (underagedCebs.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
-  //isYoung = true;
+  if (underagedCebs.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
+    isYoung = true;
   if (!isYoung) {
     var result = await openai.createModeration({
       input: prompt,
