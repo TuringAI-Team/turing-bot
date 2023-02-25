@@ -163,6 +163,7 @@ export default {
         var file = new AttachmentBuilder(Buffer.from(result), {
           name: `transcript.${output == "srt" ? "srt" : "txt"}`,
         });
+        console.log(file);
         await interaction.editReply({
           content: "Here is your transcript",
           files: [file],
