@@ -586,7 +586,9 @@ export default {
         if (
           generation.message.toLowerCase().includes("nsfw") ||
           generation.message.includes("unethical image") ||
-          generation.message.includes("violate")
+          generation.message.includes("violate") ||
+          generation.message ==
+            "This prompt appears to violate our terms of service and will be reported. Please contact us if you think this is an error."
         ) {
           const channel = client.channels.cache.get("1055943633716641853");
           channel.send(
