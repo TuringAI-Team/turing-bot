@@ -49,7 +49,6 @@ var data = new SlashCommandBuilder()
               value: "stable_diffusion",
             },
             { name: "Microworlds", value: "Microworlds" },
-            { name: "Anything Diffusion", value: "Anything Diffusion" },
             { name: "Dreamshaper", value: "Dreamshaper" },
             {
               name: "Dreamlike Photoreal",
@@ -105,12 +104,12 @@ var data = new SlashCommandBuilder()
               value: "HASDX",
             },
             {
-              name: "Anything Diffusion",
-              value: "Anything Diffusion",
-            },
-            {
               name: "Anything v3",
               value: "Anything v3",
+            },
+            {
+              name: "Anything Diffusion",
+              value: "Anything Diffusion",
             },
             {
               name: "vectorartz",
@@ -236,7 +235,6 @@ var data = new SlashCommandBuilder()
               value: "stable_diffusion",
             },
             { name: "Microworlds", value: "Microworlds" },
-            { name: "Anything Diffusion", value: "Anything Diffusion" },
             { name: "Dreamshaper", value: "Dreamshaper" },
             {
               name: "Dreamlike Photoreal",
