@@ -144,6 +144,8 @@ async function sendLongText(text, interaction) {
   var textArray = text.match(/.{1,2000}/g);
   var lastMessage = interaction;
   for (var i = 0; i < textArray.length; i++) {
-    lastMessage = await lastMessage.reply(textArray[i]);
+    if (lastMessage == interaction)
+      lastMessage = await interaction.editReply(textArray[i]);
+    else lastMessage = await lastMessage.reply(textArray[i]);
   }
 }
