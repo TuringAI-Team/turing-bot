@@ -90,7 +90,7 @@ export default {
       var result = await getTranscription(url, model);
       if (typeof result === "object" && result.error) {
         await interaction.editReply({
-          content: result.error,
+          content: `Something wrong happned:\n${result.error}`,
           ephemeral: true,
         });
         return;
@@ -103,7 +103,7 @@ export default {
       var result = await getTranscription(file.url, model);
       if (typeof result === "object" && result.error) {
         await interaction.editReply({
-          content: result.error,
+          content: `Something wrong happned:\n${result.error}`,
           ephemeral: true,
         });
         return;
