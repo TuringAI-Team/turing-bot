@@ -13,18 +13,19 @@ import { isPremium } from "../modules/premium.js";
 import axios from "axios";
 import fs from "fs";
 import ytdl from "ytdl-core";
+import FormData from "form-data";
 
 var data = new SlashCommandBuilder()
-  .setName("whisper")
-  .setDescription("Generate an image using stable diffusion.")
-  /*.addSubcommand((subcommand) =>
+  .setName("transcript")
+  .setDescription("Generate an audio transcription using whisper AI.")
+  .addSubcommand((subcommand) =>
     subcommand
       .setName("url")
       .setDescription("Transform an audio url in to text(youtube supported).")
       .addStringOption((option) =>
         option
           .setName("url")
-          .setDescription("The urlof the audio you want to transcript")
+          .setDescription("The url of the audio you want to transcript")
           .setRequired(true)
       )
       .addStringOption((option) =>
@@ -34,29 +35,16 @@ var data = new SlashCommandBuilder()
           .setRequired(true)
           .addChoices(
             {
-              name: "tiny",
-              value: "tiny",
-            },
-            {
-              name: "base",
-              value: "base",
-            },
-            {
-              name: "small",
-              value: "small",
-            },
-
-            {
               name: "medium",
               value: "medium",
             },
             {
               name: "large(Premium only)",
-              value: "lage",
+              value: "lage-v2",
             }
           )
       )
-  )*/
+  )
   .addSubcommand((subcommand) =>
     subcommand
       .setName("file")
@@ -74,25 +62,12 @@ var data = new SlashCommandBuilder()
           .setRequired(true)
           .addChoices(
             {
-              name: "tiny",
-              value: "tiny",
-            },
-            {
-              name: "base",
-              value: "base",
-            },
-            {
-              name: "small",
-              value: "small",
-            },
-
-            {
               name: "medium",
               value: "medium",
             },
             {
               name: "large(Premium only)",
-              value: "lage",
+              value: "lage-v2",
             }
           )
       )
@@ -111,71 +86,64 @@ export default {
     await interaction.deferReply();
     if (interaction.options.getSubcommand() === "url") {
       var url = interaction.options.getString("url");
-      if (url.includes("youtube.com")) {
-        const file = await getBuffer(url);
-        console.log(file);
-      } else {
-        file = await getFile(url);
-      }
 
-      var result = await getTranscription(file, model);
-      if (result.error) {
+      var result = await getTranscription(url, model);
+      if (typeof result === "object" && result.error) {
         await interaction.editReply({
           content: result.error,
           ephemeral: true,
         });
         return;
       }
-      if (result.text) {
-        await interaction.editReply(`**Transcription:** ${result.text}`);
+      if (result) {
+        await interaction.editReply(`**Transcription:** ${result}`);
       }
     } else if (interaction.options.getSubcommand() === "file") {
       var file = interaction.options.getAttachment("file");
-      file = await getFile(file.url);
-      var result = await getTranscription(file, model);
-      if (result.error) {
+      var result = await getTranscription(file.url, model);
+      if (typeof result === "object" && result.error) {
         await interaction.editReply({
           content: result.error,
           ephemeral: true,
         });
         return;
       }
-      if (result.text) {
-        await interaction.editReply(`**Transcription:** ${result.text}`);
+      if (result) {
+        await interaction.editReply(`**Transcription:** ${result}`);
       }
     }
   },
 };
-async function getBuffer(url) {
-  return new Promise((resolve, reject) => {
-    ytdl(url, { filter: "audioonly" })
-      .on("error", reject)
-      // @ts-ignore
-      .pipe(Buffer.alloc(0), (err, buffer) => {
-        if (err) reject(err);
-        else resolve(buffer);
-      });
-  });
-}
-async function getTranscription(file, model) {
+
+async function getTranscription(fileUrl, model) {
   try {
-    const response = await axios({
-      baseURL: `https://api-inference.huggingface.co/models/openai/whisper-${model}`,
-      headers: { Authorization: `Bearer ${process.env.HF}` },
-      method: "POST",
-      data: file,
-    });
-    const result = response.data;
-    return result;
+    const form = new FormData();
+    form.append("audio_url", fileUrl);
+    form.append("language_behaviour", "automatic single language");
+
+    const response = await axios.post(
+      "https://api.gladia.io/audio/text/audio-transcription/",
+      form,
+      {
+        params: {
+          model: "large-v2",
+        },
+        headers: {
+          ...form.getHeaders(),
+          accept: "application/json",
+          "x-gladia-key": process.env.GLADIA_API_KEY,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    var res = response.data;
+    var transcription = "";
+    for (var i = 0; i < res.prediction.length; i++) {
+      var tr = res.prediction[i];
+      transcription += `${tr.transcription} `;
+    }
+    return transcription;
   } catch (err) {
-    console.log(err);
     return { error: err };
   }
-}
-
-async function getFile(url) {
-  const response = await axios.get(url, { responseType: "arraybuffer" });
-  const buffer = Buffer.from(response.data, "binary");
-
-  return buffer;
 }
