@@ -19,7 +19,7 @@ import {
   png2webp,
 } from "../modules/stablehorde.js";
 import { isPremium } from "../modules/premium.js";
-//import { createCanvas, loadImage, Image } from "canvas";
+import { createCanvas, loadImage, Image } from "canvas";
 import sharp from "sharp";
 import { generateRateRow, generateUpscaleRow } from "../modules/stablehorde.js";
 import StableHorde from "@zeldafan0225/stable_horde";
@@ -105,8 +105,12 @@ var data = new SlashCommandBuilder()
               value: "HASDX",
             },
             {
-              name: "Anygen",
-              value: "Anygen",
+              name: "Anything Diffusion",
+              value: "Anything Diffusion",
+            },
+            {
+              name: "Anything v3",
+              value: "Anything v3",
             },
             {
               name: "vectorartz",
@@ -284,16 +288,16 @@ var data = new SlashCommandBuilder()
               value: "HASDX",
             },
             {
-              name: "Anygen",
-              value: "Anygen",
+              name: "Anything Diffusion",
+              value: "Anything Diffusion",
+            },
+            {
+              name: "Anything v3",
+              value: "Anything v3",
             },
             {
               name: "vectorartz",
               value: "vectorartz",
-            },
-            {
-              name: "Papercut Diffusion",
-              value: "Papercut Diffusion",
             },
             {
               name: "Deliberate",
@@ -754,7 +758,6 @@ async function sendResults(
         inline: true,
       }
     );
-  return;
   var row = await generateRateRow(id, userId, images[0].id);
   if (imagesArr.length > 1) {
     row = await generateUpscaleRow(id, images);
@@ -763,8 +766,7 @@ async function sendResults(
     const sfbuff = Buffer.from(g.img, "base64");
     return sfbuff;
   });
-  let base64;
-  //  let base64: any = await mergeBase64(imgs, width / 2, height / 2);
+  let base64: any = await mergeBase64(imgs, width / 2, height / 2);
   base64 = base64.split("base64,")[1];
   var sfbuff = Buffer.from(base64, "base64");
   var resfile = new AttachmentBuilder(sfbuff, { name: "output.png" });
@@ -777,7 +779,7 @@ async function sendResults(
     embeds: [embed],
   });
 }
-/*
+
 async function mergeBase64(imgs: string[], width, height) {
   var totalW = width * 2;
   var totalH = height * 2;
@@ -824,7 +826,7 @@ async function mergeBase64(imgs: string[], width, height) {
 
   const dataURL = canvas.toDataURL();
   return dataURL;
-}*/
+}
 function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
