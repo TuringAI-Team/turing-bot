@@ -188,11 +188,13 @@ async function getTranscription(fileUrl, model, output) {
     var res = response.data;
     var transcription = "";
     if (output == "text" || output == "textfile") {
+      if (output == "text") transcription = "**Transcription:**\n";
       for (var i = 0; i < res.prediction.length; i++) {
         var tr = res.prediction[i];
         transcription += `${tr.transcription} `;
       }
     } else if (output == "speaker") {
+      transcription = "**Transcription:**\n";
       // divide it by speaker making a dialog, speaker_0: complete text of speaker 0, speaker_1: complete text of speaker 1, speaker 0: complete text of speaker 0, etc
       var speaker = 0;
       for (var i = 0; i < res.prediction.length; i++) {
@@ -223,9 +225,7 @@ async function sendLongText(text, interaction) {
   var lastMessage = interaction;
   for (var i = 0; i < textArray.length; i++) {
     if (lastMessage == interaction)
-      lastMessage = await interaction.editReply(
-        `**Transcription:** ${textArray[i]}`
-      );
+      lastMessage = await interaction.editReply(` ${textArray[i]}`);
     else lastMessage = await lastMessage.reply(textArray[i]);
   }
 }
