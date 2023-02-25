@@ -423,7 +423,7 @@ export default {
     var tags = [];
     var guildId;
     if (interaction.guild) guildId = interaction.guild.id;
-    if (interaction.author.id != "530102778408861706") {
+    if (interaction.user.id != "530102778408861706") {
       interaction.reply({
         content: `This command is currently under maintenance, please try again later.`,
         ephemeral: true,
