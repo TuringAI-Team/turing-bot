@@ -147,7 +147,7 @@ export default {
       return;
     }
     if (result && typeof result == "string") {
-      if (output === "textfile") {
+      if (output === "textfile" || output === "srt") {
         var file = new AttachmentBuilder(Buffer.from(result), {
           name: "transcript.txt",
         });
@@ -155,8 +155,7 @@ export default {
           content: "Here is your transcript",
           files: [file],
         });
-      } else if (output == "speaker") {
-      } else if (output == "text") {
+      } else if (output == "text" || output == "speaker") {
         if (result.split("").length > 2000)
           await sendLongText(result, interaction);
         else await interaction.editReply(`**Transcription:** ${result}`);
