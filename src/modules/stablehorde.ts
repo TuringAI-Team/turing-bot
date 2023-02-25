@@ -162,8 +162,8 @@ async function filter(prompt, model?) {
     isNsfw = true;
   if (youngWords.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
     isYoung = true;
-  if (underagedCebs.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
-    isYoung = true;
+  //if (underagedCebs.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
+  //isYoung = true;
   if (!isYoung) {
     var result = await openai.createModeration({
       input: prompt,
