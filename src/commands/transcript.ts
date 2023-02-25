@@ -64,6 +64,10 @@ var data = new SlashCommandBuilder()
               value: "speaker",
             },
             {
+              name: "Speaker+text file",
+              value: "speakerfile",
+            },
+            {
               name: "Srt file",
               value: "srt",
             }
@@ -115,6 +119,10 @@ var data = new SlashCommandBuilder()
               value: "speaker",
             },
             {
+              name: "Speaker+text file",
+              value: "speakerfile",
+            },
+            {
               name: "Srt file",
               value: "srt",
             }
@@ -147,7 +155,11 @@ export default {
       return;
     }
     if (result && typeof result == "string") {
-      if (output === "textfile" || output === "srt") {
+      if (
+        output === "textfile" ||
+        output === "srt" ||
+        output == "speakerfile"
+      ) {
         var file = new AttachmentBuilder(Buffer.from(result), {
           name: "transcript.txt",
         });
