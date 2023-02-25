@@ -40,7 +40,7 @@ var data = new SlashCommandBuilder()
             },
             {
               name: "large(Premium only)",
-              value: "lage-v2",
+              value: "large-v2",
             }
           )
       )
@@ -92,7 +92,7 @@ var data = new SlashCommandBuilder()
             },
             {
               name: "large(Premium only)",
-              value: "lage-v2",
+              value: "large-v2",
             }
           )
       )
