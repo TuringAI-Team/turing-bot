@@ -195,7 +195,7 @@ async function getTranscription(fileUrl, model, output) {
     } else if (output == "speaker") {
       for (var i = 0; i < res.prediction.length; i++) {
         var tr = res.prediction[i];
-        transcription += `${tr.speaker}: ${tr.transcription}\n`;
+        transcription += `**${tr.speaker}:** ${tr.transcription}\n`;
       }
     } else if (output == "srt") {
       for (var i = 0; i < res.prediction.length; i++) {
