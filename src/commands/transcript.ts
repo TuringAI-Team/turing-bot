@@ -161,7 +161,7 @@ export default {
         output == "speakerfile"
       ) {
         var file = new AttachmentBuilder(Buffer.from(result), {
-          name: "transcript.txt",
+          name: `transcript.${output == "srt" ? "srt" : "txt"}`,
         });
         await interaction.editReply({
           content: "Here is your transcript",
