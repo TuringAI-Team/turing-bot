@@ -73,7 +73,7 @@ export async function generateImg2img(
   amount: number,
   nsfw: boolean,
   source_image: string,
-  source_processing: typeof StableHorde.SourceImageProcessingTypes[keyof typeof StableHorde.SourceImageProcessingTypes],
+  source_processing,
   cfg_scale,
   sampler,
   width,
@@ -81,14 +81,12 @@ export async function generateImg2img(
   strength
 ) {
   var passFilter = await filter(prompt, model);
-  if (!passFilter) {
+  if (!passFilter.filter) {
     return {
       message:
         "To prevent generation of unethical images, we cannot allow this prompt with NSFW models/tags.",
-      filter: true,
     };
   }
-
   try {
     const generation = await stable_horde.postAsyncGenerate({
       prompt: prompt,
@@ -98,23 +96,23 @@ export async function generateImg2img(
       shared: true,
       models: [model],
       source_image,
-      source_processing,
+      source_processing: StableHorde.SourceImageProcessingTypes.img2img,
       params: {
         n: amount,
         steps: steps,
-        cfg_scale,
+        // @ts-ignore
         sampler_name: sampler,
         width,
         height,
+        cfg_scale,
         denoising_strength: strength,
       },
     });
-    return generation;
+    return { ...generation, isNsfw: passFilter.isNsfw };
   } catch (e) {
-    return { message: e };
+    return { message: e, isNsfw: passFilter.isNsfw };
   }
 }
-
 export async function png2webp(pngUrl) {
   const response = await axios.get(pngUrl, { responseType: "arraybuffer" });
   const imageBuffer = Buffer.from(response.data, "binary");
@@ -127,58 +125,23 @@ export async function png2webp(pngUrl) {
 }
 
 async function filter(prompt, model?) {
-  var youngWords = [
-    "kid",
-    "kids",
-    "lolis",
-    "children",
-    "child",
-    "boy",
-    "baby",
-    "young",
-    "teen",
-    "teenager",
-    "niñita",
-    "years",
-    "16yo",
-    "year old",
-    "underage",
-    "underaged",
-    "under-age",
-    "under-aged",
-    "juvenile",
-    "minor",
-    "underaged-minor",
-    "youngster",
-    "young teen",
-    "preteen",
-    "pre-teen",
-    "infant",
-    "toddler",
-    "baby",
-    "prepubescent",
-    "short,",
-    "minor-aged",
-  ];
-  var nsfwModels = [];
-  var nsfwWords = ["naked", "nude", "uncensored"];
-  var isNsfw = false;
-  var isYoung = false;
-  if (nsfwModels.find((x) => x == model)) isNsfw = true;
-  if (nsfwWords.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
-    isNsfw = true;
-  if (youngWords.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
-    isYoung = true;
-  if (underagedCebs.some((v) => prompt.toLowerCase().includes(v.toLowerCase())))
-    isYoung = true;
-  if (!isYoung) {
-    var result = await openai.createModeration({
-      input: prompt,
-    });
-    isYoung = result.data.results[0].categories["sexual/minors"];
+  var req = await axios.post(
+    "https://api.turingai.tech/filter",
+    {
+      prompt: prompt,
+      model: model,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.TURING_API}`,
+      },
+    }
+  );
+  var res = req.data;
+  if (res.isCP) {
+    return { filter: false, ...res };
   }
-  if (isYoung && isNsfw) return false;
-  return true;
+  return { filter: true, ...res };
 }
 
 export async function checkGeneration(generation: any) {
@@ -233,141 +196,135 @@ export var models = [
     name: "Stable diffusion",
     value: "stable_diffusion",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/stable_diffusion/01_racebannin.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845901233160232/Stable_Diffusion.png",
   },
   {
     name: "Microworlds",
     value: "Microworlds",
     tags: ["microworld render style"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/microworlds/01_bigdowg.jpg",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845875341742130/Microworlds.png",
   },
   {
     name: "Anything Diffusion",
     value: "Anything Diffusion",
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/anything_diffusion/01.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845812599132241/Anything_Diffusion.png",
   },
 
   {
     name: "Dreamshaper",
     value: "Dreamshaper",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/dreamshaper/01_gigachad.webp",
+    img: "https://media.discordapp.net/attachments/1049270671764619264/1083845811638652928/Dreamshaper.png?width=382&height=382",
   },
   {
     name: "Dreamlike Photoreal",
     value: "Dreamlike Photoreal",
     tags: null,
-    img: "https://huggingface.co/dreamlike-art/dreamlike-photoreal-2.0/resolve/main/preview1.jpg",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845814926970930/Dreamlike_Photoreal.png",
   },
   {
     name: "Dreamlike Diffusion",
     value: "Dreamlike Diffusion",
     tags: ["dreamlikeart"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/dreamlike_diffusion/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845814633386074/Dreamlike_Diffusion.png",
   },
   {
     name: "ProtoGen",
     value: "ProtoGen",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/protogen/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845876688101546/ProtoGen.png",
   },
   {
     name: "Hentai Diffusion",
     value: "Hentai Diffusion",
     tags: ["anime"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/hentai_diffusion/01_bigdowg.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845874913910844/Hentai_Diffusion.png",
   },
   {
     name: "Synthwave",
     value: "Synthwave",
     tags: ["snthwve", "style"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/synthwave/01_bigdowg.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845901493227681/Synthwave.png",
   },
   {
     name: "Redshift Diffusion",
     value: "Redshift Diffusion",
     tags: ["redshift style"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/redshift/01_bigdowg.jpg",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845874163130378/Redshift_Diffusion.png",
   },
   {
     name: "Yiffy",
     value: "Yiffy",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/yiffy/01_pika.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845900662755339/Yiffy.png",
   },
 
   {
     name: "Protogen Infinity",
     value: "Protogen Infinity",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/protogen_infinity/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845876470001705/Protogen_Infinity.png",
   },
 
   {
     name: "Seek.art",
     value: "Seek.art MEGA",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/seek_art_mega/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845900918591600/Seek.art.png",
   },
   {
     name: "PortraitPlus",
     value: "PortraitPlus",
     tags: ["portrait"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/portraitplus/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845876243517540/PortraitPlus.png",
   },
   {
     name: "3DKX",
     value: "3DKX",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/3dkx/01_airic.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845811936432128/3DKX.png",
   },
   {
     name: "Arcane Diffusion",
     value: "Arcane Diffusion",
     tags: ["arcane style"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/arcane/01_bigdowg.jpg",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845813521895474/Arcane_Diffusion.png",
   },
   {
     name: "HASDX",
     value: "HASDX",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/hasdx/01_gigachad.webp",
-  },
-  {
-    name: "Anygen",
-    value: "Anygen",
-    tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/anygen/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845874528047244/HASDX.png",
   },
   {
     name: "vectorartz",
     value: "vectorartz",
     tags: ["vectorartz"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/vectorartz/01.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845900385910814/vectorartz.png",
   },
   {
     name: "Papercut Diffusion",
     value: "Papercut Diffusion",
     tags: ["PaperCut"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/papercut/01_bigdowg.jpg",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845875882795098/Papercut_Diffusion.png",
   },
   {
     name: "Deliberate",
     value: "Deliberate",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/deliberate/01_deliberate.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845814302031962/Deliberate.png",
   },
   {
     name: "MoistMix",
     value: "MoistMix",
     tags: null,
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/moistmix/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845875572420669/MoistMix.png",
   },
   {
     name: "ChromaV5",
     value: "ChromaV5",
     tags: ["ChromaV5"],
-    img: "https://raw.githubusercontent.com/Sygil-Dev/nataili-model-reference/main/showcase/chromav5/01_gigachad.webp",
+    img: "https://cdn.discordapp.com/attachments/1049270671764619264/1083845813870006312/ChromaV5.png",
   },
 ];
 

@@ -60,10 +60,6 @@ var data = new SlashCommandBuilder()
               value: "textfile",
             },
             {
-              name: "Speaker + text",
-              value: "speaker",
-            },
-            {
               name: "Speaker+text file",
               value: "speakerfile",
             },
@@ -115,10 +111,6 @@ var data = new SlashCommandBuilder()
               value: "textfile",
             },
             {
-              name: "Speaker + text",
-              value: "speaker",
-            },
-            {
               name: "Speaker+text file",
               value: "speakerfile",
             },
@@ -130,7 +122,7 @@ var data = new SlashCommandBuilder()
       )
   );
 export default {
-  cooldown: "2m",
+  cooldown: "1m",
   data,
   /*
    */
@@ -183,6 +175,7 @@ async function getTranscription(fileUrl, model, output) {
     const form = new FormData();
     form.append("audio_url", fileUrl);
     form.append("language_behaviour", "automatic single language");
+    if (output == "srt") form.append("output_format", "srt");
 
     const response = await axios.post(
       "https://api.gladia.io/audio/text/audio-transcription/",
@@ -220,16 +213,12 @@ async function getTranscription(fileUrl, model, output) {
         transcription += `${tr.transcription} `;
       }
     } else if (output == "srt") {
-      for (var i = 0; i < res.prediction.length; i++) {
-        var tr = res.prediction[i];
-        transcription += `${i + 1}\n${tr.start_time} --> ${tr.end_time}\n${
-          tr.transcription
-        }\n\n`;
-      }
+      transcription = res.transcription;
     }
 
     return transcription;
   } catch (err) {
+    console.log(err);
     return { error: err };
   }
 }

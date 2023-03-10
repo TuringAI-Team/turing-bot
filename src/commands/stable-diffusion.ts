@@ -19,7 +19,7 @@ import {
   png2webp,
 } from "../modules/stablehorde.js";
 import { isPremium } from "../modules/premium.js";
-import { createCanvas, loadImage, Image } from "canvas";
+//import { createCanvas, loadImage, Image } from "canvas";
 import sharp from "sharp";
 import { generateRateRow, generateUpscaleRow } from "../modules/stablehorde.js";
 import StableHorde from "@zeldafan0225/stable_horde";
@@ -795,7 +795,7 @@ async function mergeBase64(imgs: string[], width, height) {
   if (imgs.length == 2) {
     totalH = totalH / 2;
   }
-  const canvas = createCanvas(totalW, totalH);
+  var canvas; //= createCanvas(totalW, totalH);
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
