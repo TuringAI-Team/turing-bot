@@ -18,8 +18,7 @@ async function dalle(prompt, number) {
     }),
   });
   response = response.data;
-  console.log(response);
-  var imagesArr = response.data.data.map((d, i) => {
+  var imagesArr = response.data.map((d, i) => {
     return { attachment: d.url, name: `result-${i}.png` };
   });
   const { data, error } = await supabase
