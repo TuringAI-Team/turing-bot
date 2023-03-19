@@ -7,6 +7,10 @@ async function dalle(prompt, number) {
   let response = await axios({
     method: "post",
     url: "https://api.pawan.krd/v1/images/generations",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.PAWAN_KEY}`,
+    },
     data: JSON.stringify({
       n: number,
       prompt: prompt,
