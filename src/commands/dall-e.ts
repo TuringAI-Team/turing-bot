@@ -38,7 +38,7 @@ export default {
     }
     const number = parseInt(interaction.options.getString("number"));
     await interaction.deferReply();
-    let { data: accounts, error } = await supabase
+    /*   let { data: accounts, error } = await supabase
       .from("accounts")
       .select("*")
       .neq("key", null).eq('abled', true);
@@ -68,14 +68,10 @@ export default {
           key: null,
         })
         .eq("id", firstOne.id);
-    }
+    }*/
 
     try {
-      var imgs = await dalle(
-        interaction.options.getString("prompt"),
-        number,
-        firstOne.key
-      );
+      var imgs = await dalle(interaction.options.getString("prompt"), number);
 
       await interaction.editReply({
         files: imgs,
