@@ -3,22 +3,17 @@ import "dotenv/config";
 import axios from "axios";
 import supabase from "./supabase.js";
 
-async function dalle(prompt, number) {
-  let response = await axios({
-    method: "post",
-    url: "https://api.pawan.krd/v1/images/generations",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.PAWAN_KEY}`,
-    },
-    data: JSON.stringify({
-      n: number,
-      prompt: prompt,
-      size: "512x512",
-    }),
+async function dalle(prompt, number, key) {
+  const configuration = new Configuration({
+    apiKey: key,
   });
-  response = response.data;
-  var imagesArr = response.data.map((d, i) => {
+  const openai = new OpenAIApi(configuration);
+  const response = await openai.createImage({
+    prompt: prompt,
+    n: number,
+    size: "512x512",
+  });
+  var imagesArr = response.data.data.map((d, i) => {
     return { attachment: d.url, name: `result-${i}.png` };
   });
   const { data, error } = await supabase

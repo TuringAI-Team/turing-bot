@@ -38,10 +38,11 @@ export default {
     }
     const number = parseInt(interaction.options.getString("number"));
     await interaction.deferReply();
-    /*   let { data: accounts, error } = await supabase
+    let { data: accounts, error } = await supabase
       .from("accounts")
       .select("*")
-      .neq("key", null).eq('abled', true);
+      .neq("key", null)
+      .eq("abled", true);
 
     if (!accounts) {
       await interaction.editReply({
@@ -68,10 +69,14 @@ export default {
           key: null,
         })
         .eq("id", firstOne.id);
-    }*/
+    }
 
     try {
-      var imgs = await dalle(interaction.options.getString("prompt"), number);
+      var imgs = await dalle(
+        interaction.options.getString("prompt"),
+        number,
+        firstOne.key
+      );
 
       await interaction.editReply({
         files: imgs,
@@ -79,6 +84,12 @@ export default {
           interaction.user
         }  **Prompt:** ${interaction.options.getString("prompt")}`,
       });
+      await supabase
+        .from("accounts")
+        .update({
+          totalMessages: firstOne.totalMessages + 1,
+        })
+        .eq("id", firstOne.id);
     } catch (e) {
       await interaction.editReply({
         content: `Something wrong happen:\n${e}`,
