@@ -4,6 +4,7 @@ import axios from "axios";
 import supabase from "./supabase.js";
 
 async function dalle(prompt, number, key) {
+  console.log(key);
   const configuration = new Configuration({
     apiKey: key,
   });
