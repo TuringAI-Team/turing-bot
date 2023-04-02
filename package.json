@@ -23,7 +23,7 @@
     "cld": "^2.8.4",
     "delay": "^5.0.0",
     "discord-tts": "^1.2.2",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.9.0",
     "discord.js-pages": "^1.4.4",
     "djs-linereply": "^2.3.0",
     "dotenv": "^16.0.3",
