@@ -164,8 +164,8 @@ export async function generateRateRow(generationId, userId, imageId) {
   const row = new ActionRowBuilder();
   const btn1 = new ButtonBuilder() //1
     .setCustomId(`r_${generationId}_${imageId}_${userId}_1`)
-    .setStyle(ButtonStyle.Secondary)
-    .setLabel("😖");
+    .setLabel("😖")
+    .setStyle(ButtonStyle.Secondary);
   row.addComponents(btn1);
   //\😒  \😀 \😍️️️️️️\☹️
   const btn2 = new ButtonBuilder() //3
