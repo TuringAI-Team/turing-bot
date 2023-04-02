@@ -21,13 +21,22 @@ export default {
     const __dirname = path.dirname(__filename);
 
     await interaction.deferReply();
+    var shard = client.shard.client.options.shards[0] + 1;
 
-    var usersCount = 0;
-    var users = client.guilds.cache.map((guild) => guild.memberCount);
-    for (var i = 0; i < users.length; i++) {
-      usersCount += users[i];
-    }
-
+    var totalGuildsR = await client.shard.fetchClientValues(
+      "guilds.cache.size"
+    );
+    const totalGuilds = totalGuildsR.reduce(
+      (acc, guildCount) => acc + guildCount,
+      0
+    );
+    var totalMembersR = await client.shard.broadcastEval((c) =>
+      c.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)
+    );
+    const totalMembers = totalMembersR.reduce(
+      (acc, memberCount) => acc + memberCount,
+      0
+    );
     var embed = new EmbedBuilder()
       .setColor("#347d9c")
       .setTimestamp()
@@ -42,14 +51,15 @@ export default {
         },
         {
           name: "Servers",
-          value: `${client.guilds.cache.size}`,
+          value: `${totalGuilds}`,
           inline: true,
         },
         {
           name: "Users",
-          value: `${usersCount}`,
+          value: `${totalMembers}`,
           inline: true,
         },
+
         {
           name: "Created At",
           value: `${timeString}`,
@@ -65,6 +75,11 @@ export default {
           value: `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(
             2
           )} MB`,
+          inline: true,
+        },
+        {
+          name: "Shard",
+          value: `${shard}/${client.shard.count}`,
           inline: true,
         },
         {
