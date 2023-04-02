@@ -483,7 +483,7 @@ export default {
       .select("*")
       .eq("id", interaction.user.id);
     if (userBans.data[0] && userBans.data[0].banned) {
-      interaction.reply({
+      await interaction.reply({
         content: `You are banned from using this utility, If you think this is an error please contact [the support server](https://dsc.gg/turing) .`,
         ephemeral: true,
       });
